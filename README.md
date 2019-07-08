@@ -7,3 +7,8 @@ Per l'interfaccia pensavamo a telegram, come una chat di comunicazione con la tu
 
 -- Tutorial su bot telegram
 https://djangostars.com/blog/how-to-create-and-deploy-a-telegram-bot/?utm_source=medium&utm_medium=chatbotslife.com&utm_campaign=telegrambotwithpython&utm_content=continuereading
+
+
+# Codice giardinino
+
+https://github.com/gradyh/GradyHillhouseGarduino.git
