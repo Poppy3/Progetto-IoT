@@ -12,3 +12,27 @@ https://djangostars.com/blog/how-to-create-and-deploy-a-telegram-bot/?utm_source
 #### Codice giardinino
 
 https://github.com/gradyh/GradyHillhouseGarduino.git
+
+
+##### esempio richiesta post a ngrok (al posto del webhook)
+{
+  "update_id": 671372324,
+  "message": {
+    "message_id": 40,
+    "from": {
+      "id": 820844162,
+      "is_bot": false,
+      "first_name": "Asia",
+      "last_name": "Bergamini",
+      "language_code": "it"
+    },
+    "chat": {
+      "id": 353051365,
+      "first_name": "Asia",
+      "last_name": "Bergamini",
+      "type": "private"
+    },
+    "date": 1562599569,
+    "text": "TESTO DEL MESSAGGIO"
+  }
+}
