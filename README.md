@@ -36,3 +36,7 @@ https://github.com/gradyh/GradyHillhouseGarduino.git
     "text": "TESTO DEL MESSAGGIO"
   }
 }
+
+
+####Lista della spesa
+sensore umidità terreno
