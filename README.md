@@ -13,6 +13,9 @@ https://djangostars.com/blog/how-to-create-and-deploy-a-telegram-bot/?utm_source
 
 https://github.com/gradyh/GradyHillhouseGarduino.git
 
+#### Progetto pazzesco
+https://create.arduino.cc/projecthub/dymonxd/grow-it-yourself-giy-bec993?ref=tag&ref_id=garden&offset=2
+
 
 ##### esempio richiesta post a ngrok (al posto del webhook)
 {
