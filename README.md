@@ -19,6 +19,9 @@ https://create.arduino.cc/projecthub/dymonxd/grow-it-yourself-giy-bec993?ref=tag
 #### Token Ngrok di Asia
 3ZHQNQ77QjY9tm273GSnB_5cZzYeXghN4HyG7R9w1r6
 
+#### Token Bot Flowey
+744755426:AAHCNYYTctEwvwW_PBzBK7NV8fh1pHkqaiQ
+
 
 ##### esempio richiesta post a ngrok (al posto del webhook)
 {
