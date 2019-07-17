@@ -47,5 +47,17 @@ https://create.arduino.cc/projecthub/dymonxd/grow-it-yourself-giy-bec993?ref=tag
 }
 
 
-####Lista della spesa
-sensore umidità terreno
+#### Passaggi per rimettere su il bot di Telegram
+
+https://api.telegram.org/bot744755426:AAHCNYYTctEwvwW_PBzBK7NV8fh1pHkqaiQ/getUpdates
+Giusto se serve vedere l'ultimo messaggio ricevuto (non finziona se un webhook è attivo)
+
+1 - far partire Ngrok
+./ngrok http 8080
+
+2 - Aggironare il webhook
+https://api.telegram.org/bot744755426:AAHCNYYTctEwvwW_PBzBK7NV8fh1pHkqaiQ/getWebhookInfo
+---> https://api.telegram.org/bot744755426:AAHCNYYTctEwvwW_PBzBK7NV8fh1pHkqaiQ/setWebHook?url=[nuovo ngrok url]  se necessita di essere aggiornato. Oppure setWebHook può essere chiamato senza url per cancellare il webhook.
+
+Nota: telegram vuole solo webhook https, non usare solo http.
+
