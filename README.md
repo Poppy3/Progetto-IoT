@@ -22,6 +22,8 @@ https://create.arduino.cc/projecthub/dymonxd/grow-it-yourself-giy-bec993?ref=tag
 #### Token Bot Flowey
 744755426:AAHCNYYTctEwvwW_PBzBK7NV8fh1pHkqaiQ
 
+#### Tesina
+https://docs.google.com/document/d/1NNB9fvqPyqg2SD_VwvQb1ESI88l5bCgdshtuKrfREr8/edit?usp=sharing
 
 ##### esempio richiesta post a ngrok (al posto del webhook)
 {
