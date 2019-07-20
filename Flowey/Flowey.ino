@@ -2,87 +2,141 @@
 
 #define DHT_SENSOR_TYPE DHT_TYPE_11
 
-static const int lightPin1 = A0;
-static const int lightPin2 = A1;
-static const int thermoPin = A2;
+static const int thermoPin = A0;
+static const int lightPin1 = A1;
+static const int lightPin2 = A2;
 static const int dhtDataPin = 2;
+static const int hygroDataPin1 = A3;
+static const int hygroDataPin2 = A4;
+static const int hygroDataPin3 = A5;
 
-static const unsigned long DELAY_TIME = 2500;
+static const int ledRPin = 11;
+static const int ledGPin = 10;
+static const int ledBPin = 9;
+
+static const unsigned long DELAY_TIME = 600000; // 10 minutes in milliseconds
 
 DHT_nonblocking dht_sensor(dhtDataPin, DHT_SENSOR_TYPE);
 
+int led_valueR = 250;
+int led_valueG = 0;
+int led_valueB = 0;
+int sign = -1;
+
 
 void setup() {
+  pinMode(ledRPin, OUTPUT);
+  pinMode(ledGPin, OUTPUT);
+  pinMode(ledBPin, OUTPUT);
   Serial.begin(9600);
+}
+
+
+void measure_hygrometer(int *humidity, int pin)
+{
+  *humidity = analogRead(pin);
 }
 
 
 bool measure_dht_with_delay(float *temperature, float *humidity)
 {
   static unsigned long delayStart = millis();
-  if(millis() - delayStart >= DELAY_TIME)
+  if (millis() - delayStart >= DELAY_TIME)
   {
-    if(dht_sensor.measure(temperature, humidity) == true)
+    if (dht_sensor.measure(temperature, humidity) == true)
     {
       delayStart = millis();
-      return(true);
+      return (true);
     }
   }
-  return(false);
+  return (false);
 }
 
 
-bool measure_thermometer(float *tempC)
+int read_serial()
+{
+  int incomingByte = -1
+  if (Serial.available() > 0){
+    incomingByte = Serial.read();
+  }
+  return(incomingByte);
+}
+
+
+void measure_thermometer(float *tempC)
 {
   int tempReading = analogRead(thermoPin);
   // Temp Kelvin
   double tempK = log(10000.0 * ((1024.0 / tempReading - 1)));
-  tempK = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * tempK * tempK)) * tempK); 
+  tempK = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * tempK * tempK)) * tempK);
   *tempC = tempK - 273.15;  // Convert Kelvin to Celcius
-  return(true);
 }
 
 
-bool measure_photocell1(int *light)
+void measure_photocell(int *light, int pin)
 {
-  *light = analogRead(lightPin1);
-  return(true);
+  *light = analogRead(pin);
 }
 
-bool measure_photocell2(int *light)
+
+void color_led(int r, int g, int b)
 {
-  *light = analogRead(lightPin2);
-  return(true);
+  analogWrite(ledRPin, r);
+  analogWrite(ledGPin, g);
+  analogWrite(ledBPin, b);
+}
+
+
+void print_values_as_json(float dht_t, float dht_h,
+                          float t,
+                          int l1, int l2,
+                          int h1, int h2, int h3)
+{
+  Serial.print("{");
+  Serial.print("\"timestamp\":");       Serial.print(millis()); Serial.print(",");
+  Serial.print("\"dht_temperature\":"); Serial.print(dht_t);    Serial.print(",");
+  Serial.print("\"dht_humidity\":");    Serial.print(dht_h);    Serial.print(",");
+  Serial.print("\"temperature\":");     Serial.print(t);        Serial.print(",");
+  Serial.print("\"luminosity_1\":");    Serial.print(l1);       Serial.print(",");
+  Serial.print("\"luminosity_2\":");    Serial.print(l2);       Serial.print(",");
+  Serial.print("\"humidity_1\":");      Serial.print(h1);       Serial.print(",");
+  Serial.print("\"humidity_2\":");      Serial.print(h2);       Serial.print(",");
+  Serial.print("\"humidity_3\":");      Serial.print(h3);
+  Serial.println("}");
 }
 
 
 void loop() {
-  float dht_temperature;
-  float dht_humidity;
-  float thermometer_temperature;
-  int photocell_light1;
-  int photocell_light2;
-  
-  if(measure_dht_with_delay(&dht_temperature, &dht_humidity) == true)
+  float dht_temperature = 0;
+  float dht_humidity = 0;
+  float thermometer_temperature = 0;
+  int photocell_light1 = 0;
+  int photocell_light2 = 0;
+  int hygrometer_humidity1 = 0;
+  int hygrometer_humidity2 = 0;
+  int hygrometer_humidity3 = 0;
+
+  if (measure_dht_with_delay(&dht_temperature, &dht_humidity) == true)
   {
-    Serial.print("[DHT11]       T = ");
-    Serial.print(dht_temperature, 2);
-    Serial.print(" deg. C, H = ");
-    Serial.print(dht_humidity, 2);
-    Serial.println("%");
-
     measure_thermometer(&thermometer_temperature);
-    Serial.print("[THERMISTOR]  T = ");
-    Serial.print(thermometer_temperature, 2);
-    Serial.println(" deg. C");
 
-    measure_photocell1(&photocell_light1);
-    measure_photocell2(&photocell_light2);
-    Serial.print("[PHOTOCELL-1] L = ");
-    Serial.println(photocell_light1);
-    Serial.print("[PHOTOCELL-2] L = ");
-    Serial.println(photocell_light2);
-    Serial.println("------");
+    measure_photocell(&photocell_light1, lightPin1);
+    measure_photocell(&photocell_light2, lightPin2);
+
+    measure_hygrometer(&hygrometer_humidity1, hygroDataPin1);
+    measure_hygrometer(&hygrometer_humidity2, hygroDataPin2);
+    measure_hygrometer(&hygrometer_humidity3, hygroDataPin3);
+
+    print_values_as_json(dht_temperature, dht_humidity,
+                         thermometer_temperature,
+                         photocell_light1, photocell_light2,
+                         hygrometer_humidity1, hygrometer_humidity2, hygrometer_humidity3
+                        );
   }
 
+  int led_mode;
+  int serial_value = read_serial();
+  if (serial_value != -1){
+    // TODO gestisci la luce
+  }
 }

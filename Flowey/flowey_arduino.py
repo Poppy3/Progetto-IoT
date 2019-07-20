@@ -20,7 +20,10 @@ class FloweyArduino:
 			"dht_humidity" : 12.34,
 			"temperature" : 12.34,
 			"luminosity_1" : 1234,
-			"luminosity_2" : 1234
+			"luminosity_2" : 1234,
+			"humidity_1" : 1234,
+			"humidity_2" : 1234,
+			"humidity_3" : 1234
 		}
 		"""
 		for i in range(10):  # max 10 tentatives

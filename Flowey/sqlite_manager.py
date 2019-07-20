@@ -84,19 +84,26 @@ def select_last_flowey_data(conn):
 	return row
 
 
+def sql_create_table_statement():
+	return """ CREATE TABLE IF NOT EXISTS flowey_data (
+				id integer PRIMARY KEY,
+				creation_date text NOT NULL,
+				timestamp integer NOT NULL,
+				dht_temperature real NOT NULL,
+				dht_humidity real NOT NULL,
+				temperature real NOT NULL,
+				luminosity_1 integer NOT NULL,
+				luminosity_2 integer NOT NULL,
+				humidity_1 integer NOT NULL,
+				humidity_2 integer NOT NULL,
+				humidity_3 integer NOT NULL
+			); """
+
+
 if __name__ == '__main__':
 	database = r'C:\Users\damia\Desktop\flowey.db'
 
-	sql_create_table_flowey_data = """ CREATE TABLE IF NOT EXISTS flowey_data (
-										id integer PRIMARY KEY,
-										creation_date text NOT NULL,
-										timestamp integer NOT NULL,
-										dht_temperature real NOT NULL,
-										dht_humidity real NOT NULL,
-										temperature real NOT NULL,
-										luminosity_1 integer NOT NULL,
-										luminosity_2 integer NOT NULL
-									); """
+	sql_create_table_flowey_data = sql_create_table_statement()
 
 	# create a database connection
 	conn = create_connection(database)

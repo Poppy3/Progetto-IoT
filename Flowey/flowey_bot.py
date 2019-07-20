@@ -14,7 +14,7 @@ from bottle import (
 # <--- add your telegram token here; it should be like https://api.telegram.org/bot12345678:SOMErAn2dom/
 BOT_URL = 'https://api.telegram.org/bot744755426:AAHCNYYTctEwvwW_PBzBK7NV8fh1pHkqaiQ/'
 DATABASE_NAME = r'C:\Users\damia\Desktop\flowey.db'
-DB_WRITE_DELAY = 60.0  # delay in secondi tra una scrittura sul db e l'altra
+DB_WRITE_DELAY = 0.0  # delay in secondi tra una scrittura sul db e l'altra
 
 
 def send_message(prepared_data):  
@@ -51,7 +51,7 @@ def show_help(chat_id):
 		(
 		"I comandi disponibili sono:\n"
 		"- /help : mostra questo messaggio\n"
-		"- /flowey : mostra i dati provenienti dal canale seriale di arduino\n"
+		"- /flowey : mostra l'ultima riga scritta sul db\n"
 		)
 	))
 
@@ -65,22 +65,9 @@ def show_flowey(chat_id):
 
 
 def setup_db():
-	database = r'C:\Users\damia\Desktop\flowey.db'
-	sql_create_table_flowey_data = """ CREATE TABLE IF NOT EXISTS flowey_data (
-										id integer PRIMARY KEY,
-										creation_date text NOT NULL,
-										timestamp integer NOT NULL,
-										dht_temperature real NOT NULL,
-										dht_humidity real NOT NULL,
-										temperature real NOT NULL,
-										luminosity_1 integer NOT NULL,
-										luminosity_2 integer NOT NULL
-									); """
-	# create a database connection
 	conn = sql.create_connection(DATABASE_NAME)
 	with conn:
-		# create flowey_data table
-		sql.create_table(conn, sql_create_table_flowey_data)
+		sql.create_table(conn, sql.sql_create_table_statement())
 		return conn
 	return None
 
@@ -122,11 +109,16 @@ def run_flowey_db_writer():
 								data['dht_humidity'],
 								data['temperature'],
 								data['luminosity_1'],
-								data['luminosity_2'])
-					if time.time() - last_time > DB_WRITE_DELAY:
-						sql.insert_flowey_data(conn, sql_data)
-						print("tick: ", time.time())
-						last_time = time.time()
+								data['luminosity_2'],
+								data['humidity_1']
+								data['humidity_2']
+								data['humidity_3']
+								)
+					if DB_WRITE_DELAY > 0:
+						if time.time() - last_time > DB_WRITE_DELAY:
+							sql.insert_flowey_data(conn, sql_data)
+							print("tick: ", time.time())
+							last_time = time.time()
 			except:
 				print("Received Interrupt -> breaking from while True")
 				break
