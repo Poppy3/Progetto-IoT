@@ -16,12 +16,13 @@ static const int ledBPin = 9;
 
 static const unsigned long DELAY_TIME = 600000; // 10 minutes in milliseconds
 
+static const String UUID = "ARDUINO001";
+
 DHT_nonblocking dht_sensor(dhtDataPin, DHT_SENSOR_TYPE);
 
-int led_valueR = 250;
-int led_valueG = 0;
-int led_valueB = 0;
-int sign = -1;
+int ledR = 0;
+int ledG = 255;
+int ledB = 0;
 
 
 void setup() {
@@ -55,7 +56,7 @@ bool measure_dht_with_delay(float *temperature, float *humidity)
 
 int read_serial()
 {
-  int incomingByte = -1
+  int incomingByte = -1;
   if (Serial.available() > 0){
     incomingByte = Serial.read();
   }
@@ -86,6 +87,28 @@ void color_led(int r, int g, int b)
   analogWrite(ledBPin, b);
 }
 
+void manage_led()
+{
+  int serial_value = read_serial();
+  switch (serial_value) {
+    case '0': // green light
+      ledR = 0;   ledG = 200; ledB = 0;
+      break;
+    case '1': // yellow light
+      ledR = 255; ledG = 200; ledB = 0;
+      break;
+    case '2': // orange light
+      ledR = 255; ledG = 40; ledB = 0;
+      break;
+    case '3': // red light
+      ledR = 255; ledG = 0;   ledB = 0;
+      break;
+    default: // nothing
+      break;
+  }
+  color_led(ledR, ledG, ledB);
+}
+
 
 void print_values_as_json(float dht_t, float dht_h,
                           float t,
@@ -93,6 +116,7 @@ void print_values_as_json(float dht_t, float dht_h,
                           int h1, int h2, int h3)
 {
   Serial.print("{");
+  Serial.print("\"UUID\":\"");          Serial.print(UUID);     Serial.print("\",");
   Serial.print("\"timestamp\":");       Serial.print(millis()); Serial.print(",");
   Serial.print("\"dht_temperature\":"); Serial.print(dht_t);    Serial.print(",");
   Serial.print("\"dht_humidity\":");    Serial.print(dht_h);    Serial.print(",");
@@ -116,6 +140,7 @@ void loop() {
   int hygrometer_humidity2 = 0;
   int hygrometer_humidity3 = 0;
 
+  /*** manage measurements ***/
   if (measure_dht_with_delay(&dht_temperature, &dht_humidity) == true)
   {
     measure_thermometer(&thermometer_temperature);
@@ -130,13 +155,10 @@ void loop() {
     print_values_as_json(dht_temperature, dht_humidity,
                          thermometer_temperature,
                          photocell_light1, photocell_light2,
-                         hygrometer_humidity1, hygrometer_humidity2, hygrometer_humidity3
-                        );
+                         hygrometer_humidity1, hygrometer_humidity2, hygrometer_humidity3);
   }
 
-  int led_mode;
-  int serial_value = read_serial();
-  if (serial_value != -1){
-    // TODO gestisci la luce
-  }
+  /*** manage rgb led ***/
+  manage_led();
+  
 }
