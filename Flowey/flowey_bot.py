@@ -89,31 +89,49 @@ def main():
 	return response  # status 200 OK by default
 
 
-def run_bottle():
-	print("Avviato run_bottle")
+def run_bottle_server():
+	print("Avviato run_bottle_server")
 	run(host='localhost', port=8080, debug=True)
 
 
-def run_flowey_db_writer():
-	print("Avviato run_flowey_db_writer")
+def run_flowey():
+	print("Avviato run_flowey")
 	flowey = FloweyArduino()
 	conn = setup_db()
 	last_time = time.time()
+	
+	increase = True
+	
 	with conn:
 		while True:
 			try:
 				data = flowey.readline()
 				if data is not None:
-					sql_data = (data['timestamp'],
+					print("Serial data received: ", data)
+					sql_data = (data['UUID'],
+								data['timestamp'],
 								data['dht_temperature'],
 								data['dht_humidity'],
 								data['temperature'],
 								data['luminosity_1'],
 								data['luminosity_2'],
-								data['humidity_1']
-								data['humidity_2']
+								data['humidity_1'],
+								data['humidity_2'],
 								data['humidity_3']
 								)
+					# CODICE TEMPORANEO QUA, per provare il led comandato col seriale
+					print("IN: flowy status: ", flowey._status_code)
+					if increase:
+						flowey.increase_severity_level()
+						if flowey._status_code == 3:
+							increase = False
+					else:
+						flowey.decrease_severity_level()
+						if flowey._status_code == 0:
+							increase = True
+					print("OU: flowy status: ", flowey._status_code)
+					# eo CODICE TEMPORANEO QUA, per provare il led comandato col seriale
+					
 					if DB_WRITE_DELAY > 0:
 						if time.time() - last_time > DB_WRITE_DELAY:
 							sql.insert_flowey_data(conn, sql_data)
@@ -126,10 +144,10 @@ def run_flowey_db_writer():
 
 if __name__ == '__main__':
 	try:
-		bot = mp.Process(target=run_bottle)
-		flowey_db_writer = mp.Process(target=run_flowey_db_writer)
-		bot.start()
-		flowey_db_writer.start()
+		server_proc = mp.Process(target=run_bottle_server)
+		flowey_proc = mp.Process(target=run_flowey)
+		server_proc.start()
+		flowey_proc.start()
 	except:
-		bot.close()
-		flowey_db_writer.close()
+		server_proc.close()
+		flowey_proc.close()

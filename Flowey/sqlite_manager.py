@@ -101,6 +101,7 @@ def sql_create_table_statement():
 
 
 if __name__ == '__main__':
+	""" used only during development """
 	database = r'C:\Users\damia\Desktop\flowey.db'
 
 	sql_create_table_flowey_data = sql_create_table_statement()
