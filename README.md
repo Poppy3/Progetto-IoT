@@ -3,6 +3,9 @@
 L'idea per ora è usare un arduino per leggere i valori dai sensori. La comunicazione con raspberry (o pc) potrebbe essere gestita con seriale, o wifi/bluetooth(ma richiede componenti aggiuntivi).
 Per l'interfaccia pensavamo a telegram, come una chat di comunicazione con la tua pianta.
 
+#### Note e Roadmap
+https://drive.google.com/file/d/1XYSa08EJ1ZOf_Li4b5JfjfEtsua2vAaS/view?usp=sharing
+
 #### Risorse
 
 -- Tutorial su bot telegram
