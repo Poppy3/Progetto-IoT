@@ -4,7 +4,8 @@ L'idea per ora è usare un arduino per leggere i valori dai sensori. La comunica
 Per l'interfaccia pensavamo a telegram, come una chat di comunicazione con la tua pianta.
 
 #### Note e Roadmap
-https://drive.google.com/file/d/1XYSa08EJ1ZOf_Li4b5JfjfEtsua2vAaS/view?usp=sharing
+
+https://docs.google.com/document/d/1bADpilcZcmvr3uMJ3wHkrVnHlY_TWHJ9U9sN4OMp0S4/edit?usp=sharing
 
 #### Risorse
 
