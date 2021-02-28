@@ -1,6 +1,7 @@
 import sqlite3
 import time
-import db_config as cfg
+from IOT_flowey.server import db_config as cfg
+import os
 from sqlite3 import Error
 
 
@@ -65,7 +66,7 @@ def select_all_flowey_data(conn):
     :return:
     """
     cur = conn.cursor()
-    cur.execute("SELECT * FROM flowey_data ORDER BY creation_date DESC")
+    cur.execute("SELECT * FROM cfg. ORDER BY creation_date DESC")
     rows = cur.fetchall()
     for row in rows:
         # print(row)
@@ -103,15 +104,17 @@ def sql_create_table_statement():
 
 if __name__ == '__main__':
     """ used only during development """
-    database = r'C:\Users\damia\Desktop\flowey.db'
+
+    database_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), cfg.DATABASE_NAME)
+    print(database_path)
 
     sql_create_table_flowey_data = sql_create_table_statement()
 
     # create a database connection
-    conn = create_connection(database)
+    conn = create_connection(database_path)
     with conn:
         # create flowey_data table
-        create_table(conn, sql_create_table_flowey_data)
+        create_table(conn, cfg.SQL.TABLE_PLANT.STATEMENT_CREATE)
 
         # create a new row
         flowey_data_vals = (2775, 27.00, 64.00, 26.98, 55, 48)
@@ -119,5 +122,4 @@ if __name__ == '__main__':
         time.sleep(1.1)
         flowey_data_vals = (5544, 28.00, 65.00, 27.88, 56, 50)
         row_id = insert_flowey_data(conn, flowey_data_vals)
-
         select_all_flowey_data(conn)
