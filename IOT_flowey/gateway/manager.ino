@@ -16,7 +16,7 @@ static const int ledBPin = 9;
 
 static const unsigned long DELAY_TIME = 600000; // 10 minutes in milliseconds
 
-static const String UUID = "ARDUINO001";
+static const String device_id = "ARDUINO001";
 
 DHT_nonblocking dht_sensor(dhtDataPin, DHT_SENSOR_TYPE);
 
@@ -116,15 +116,15 @@ void print_values_as_json(float dht_t, float dht_h,
                           int h1, int h2, int h3)
 {
   Serial.print("{");
-  Serial.print("\"UUID\":\"");          Serial.print(UUID);     Serial.print("\",");
-  Serial.print("\"timestamp\":");       Serial.print(millis()); Serial.print(",");
-  Serial.print("\"dht_temperature\":"); Serial.print(dht_t);    Serial.print(",");
-  Serial.print("\"dht_humidity\":");    Serial.print(dht_h);    Serial.print(",");
-  Serial.print("\"temperature\":");     Serial.print(t);        Serial.print(",");
-  Serial.print("\"luminosity_1\":");    Serial.print(l1);       Serial.print(",");
-  Serial.print("\"luminosity_2\":");    Serial.print(l2);       Serial.print(",");
-  Serial.print("\"humidity_1\":");      Serial.print(h1);       Serial.print(",");
-  Serial.print("\"humidity_2\":");      Serial.print(h2);       Serial.print(",");
+  Serial.print("\"device_id\":\"");     Serial.print(device_id); Serial.print("\",");
+  Serial.print("\"timestamp\":");       Serial.print(millis());  Serial.print(",");
+  Serial.print("\"dht_temperature\":"); Serial.print(dht_t);     Serial.print(",");
+  Serial.print("\"dht_humidity\":");    Serial.print(dht_h);     Serial.print(",");
+  Serial.print("\"temperature\":");     Serial.print(t);         Serial.print(",");
+  Serial.print("\"luminosity_1\":");    Serial.print(l1);        Serial.print(",");
+  Serial.print("\"luminosity_2\":");    Serial.print(l2);        Serial.print(",");
+  Serial.print("\"humidity_1\":");      Serial.print(h1);        Serial.print(",");
+  Serial.print("\"humidity_2\":");      Serial.print(h2);        Serial.print(",");
   Serial.print("\"humidity_3\":");      Serial.print(h3);
   Serial.println("}");
 }

@@ -26,7 +26,7 @@ class GatewayConnector:
     def readline(self):
         """ expecting this data format from the serial channel of the arduino
         {
-            "UUID": "ARDUINO001",
+            "device_id": "ARDUINO001",
             "timestamp" : 1234,
             "dht_temperature" : 12.34,
             "dht_humidity" : 12.34,
