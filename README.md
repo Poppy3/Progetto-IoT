@@ -1,3 +1,5 @@
+Pwd MySQL su pc di damiano: asiadamianomarco
+
 # Progetto IoT - Garduino (kind of)
 
 L'idea per ora è usare un arduino per leggere i valori dai sensori. La comunicazione con raspberry (o pc) potrebbe essere gestita con seriale, o wifi/bluetooth(ma richiede componenti aggiuntivi).
