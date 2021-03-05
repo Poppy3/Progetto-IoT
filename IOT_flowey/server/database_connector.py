@@ -85,7 +85,7 @@ class DatabaseConnector:
         self._cursor.execute("INSERT INTO plants (plant_id, device_id, plant_type_id, creation_date,"
                              "timestamp, dht_humidity, dht_temperature, luminosity_1, luminosity_2,"
                              "humidity_1, humidity_2, humidity_3, temperature) "
-                             "VALUES (%(plant_id)s, %(device_id)s, %(plant_type_id)s, %(creation_date)s"
+                             "VALUES (%(plant_id)s, %(device_id)s, %(plant_type_id)s, %(creation_date)s,"
                              "%(timestamp)s, %(dht_humidity)s, %(dht_temperature)s, %(luminosity_1)s, %(luminosity_2)s,"
                              "%(humidity_1)s, %(humidity_2)s, %(humidity_3)s, %(temperature)s)", data)
         self._cnx.commit()
@@ -112,7 +112,7 @@ class DatabaseConnector:
                              "VALUES (%(name)s, %(description)s, %(humidity_min)s, %(humidity_max)s,"
                              "%(humidity_tolerance_time)s, %(luminosity_min)s, %(luminosity_max)s,"
                              "%(luminosity_tolerance_time)s, %(temperature_min)s, %(temperature_max)s,"
-                             "%(temperature_tolerance_time)", data)
+                             "%(temperature_tolerance_time)s)", data)
         self._cnx.commit()
         return self._cursor.lastrowid
 
@@ -121,8 +121,8 @@ class DatabaseConnector:
                              "luminosity_min, luminosity_max, luminosity_tolerance_time, temperature_min,"
                              "temperature_max, temperature_tolerance_time, last_modified "
                              "FROM plant_types "
-                             "WHERE name = %s", name)
-        return self._cursor
+                             "WHERE name = %s", (name,))
+        return self._cursor.fetchone()
 
 
 

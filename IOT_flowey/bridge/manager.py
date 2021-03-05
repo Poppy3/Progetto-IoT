@@ -9,6 +9,7 @@ from gateway_connector import GatewayConnector
 from utils import debug
 
 # standard libraries
+import datetime
 import json
 import multiprocessing as mp
 from pathlib import Path
@@ -18,7 +19,10 @@ from serial import SerialException
 def run_gateway_connector(connection):
     serial_port = connection["p"]
     serial_number = connection["n"]
-    debug(f'Running run_gateway_connector with serial-port={serial_port} and serial-number={serial_number}')
+    uuid = connection["id"]
+    plant_type_name = connection["t"]
+    debug(f'Running run_gateway_connector with parameters: {connection}')
+
     try:
         connector = GatewayConnector(serial_port, serial_number)
         while True:
@@ -26,7 +30,11 @@ def run_gateway_connector(connection):
                 data = connector.readline()
                 debug(f'Serial data received: {data}')
                 if data is not None:
-                    # TODO
+                    # TODO - aggiungi dati e passali all'API del datacenter
+                    data['plant_id'] = uuid
+                    data['plant_type_name'] = plant_type_name
+                    data['creation_date'] = datetime.datetime.now().isoformat()
+                    # TODO - altro
                     pass
             except Exception as e:
                 print(f'ERROR - Raised exception {e}\n{e.args}')
