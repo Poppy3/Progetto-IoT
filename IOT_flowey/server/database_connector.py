@@ -32,6 +32,22 @@ class DatabaseConnector:
         self._cnx.close()
 
     def init_tables(self):
+        self._cursor.execute("CREATE TABLE IF NOT EXISTS plant_types ("
+                             "id INT AUTO_INCREMENT PRIMARY KEY,"
+                             "name VARCHAR(255) NOT NULL UNIQUE ,"
+                             "description TEXT,"
+                             "humidity_min DECIMAL(10,3),"
+                             "humidity_max DECIMAL(10,3),"
+                             "humidity_tolerance_time INT,"
+                             "luminosity_min DECIMAL(10,3),"
+                             "luminosity_max DECIMAL(10,3),"
+                             "luminosity_tolerance_time INT,"
+                             "temperature_min DECIMAL(10,3),"
+                             "temperature_max DECIMAL(10,3),"
+                             "temperature_tolerance_time INT,"
+                             "last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+                             ") ENGINE=INNODB;")
+
         self._cursor.execute("CREATE TABLE IF NOT EXISTS plants ("
                              "id INT AUTO_INCREMENT PRIMARY KEY,"
                              "last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
@@ -39,34 +55,18 @@ class DatabaseConnector:
                              "device_id VARCHAR(255) NOT NULL,"
                              "creation_date DATETIME,"
                              "timestamp INT,"
-                             "dht_humidity DECIMAL,"
-                             "dht_temperature DECIMAL,"
+                             "dht_humidity DECIMAL(10,3),"
+                             "dht_temperature DECIMAL(10,3),"
                              "luminosity_1 INT,"
                              "luminosity_2 INT,"
                              "humidity_1 INT,"
                              "humidity_2 INT,"
                              "humidity_3 INT,"
-                             "temperature DECIMAL,"
+                             "temperature DECIMAL(10,3),"
                              "plant_type_id INT,"
                              "CONSTRAINT fk_plant_type_id "
                              "FOREIGN KEY (plant_type_id) "
                              "REFERENCES plant_types(id)"
-                             ") ENGINE=INNODB;")
-
-        self._cursor.execute("CREATE TABLE IF NOT EXISTS plant_types ("
-                             "id INT AUTO_INCREMENT PRIMARY KEY,"
-                             "name VARCHAR(255) NOT NULL UNIQUE ,"
-                             "description TEXT,"
-                             "humidity_min DECIMAL,"
-                             "humidity_max DECIMAL,"
-                             "humidity_tolerance_time INT,"
-                             "luminosity_min DECIMAL,"
-                             "luminosity_max DECIMAL,"
-                             "luminosity_tolerance_time INT,"
-                             "temperature_min DECIMAL,"
-                             "temperature_max DECIMAL,"
-                             "temperature_tolerance_time INT,"
-                             "last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
                              ") ENGINE=INNODB;")
 
     def insert_plant_data(self, data):
@@ -116,14 +116,25 @@ class DatabaseConnector:
         self._cnx.commit()
         return self._cursor.lastrowid
 
+    # def select_plant_type_by_name(self, name):
+    #     self._cursor.execute("SELECT id, name, description, humidity_min, humidity_max, humidity_tolerance_time,"
+    #                          "luminosity_min, luminosity_max, luminosity_tolerance_time, temperature_min,"
+    #                          "temperature_max, temperature_tolerance_time, last_modified "
+    #                          "FROM plant_types "
+    #                          "WHERE name = %s", (name,))
+    #     return self._cursor.fetchone()
+
     def select_plant_type_by_name(self, name):
-        self._cursor.execute("SELECT id, name, description, humidity_min, humidity_max, humidity_tolerance_time,"
-                             "luminosity_min, luminosity_max, luminosity_tolerance_time, temperature_min,"
-                             "temperature_max, temperature_tolerance_time, last_modified "
-                             "FROM plant_types "
+        self._cursor.execute("SELECT * FROM plant_types "
                              "WHERE name = %s", (name,))
         return self._cursor.fetchone()
 
+    def select_plant_by_id(self, plant_id, size=None):
+        self._cursor.execute("SELECT * FROM plants "
+                             "WHERE plant_id = %s", (plant_id,))
+        if size is None:
+            return self._cursor.fetchall()
+        return self._cursor.fetchmany(size)
 
 
 

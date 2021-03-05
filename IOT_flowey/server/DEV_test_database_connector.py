@@ -14,6 +14,7 @@ if __name__ == '__main__':
 
     datetime_now = datetime.datetime.now()
     plant_type_name = f'cactus {datetime_now.strftime("%H%M%S")}'
+    plant_id = 'FAKE-PLANT001'
 
     # data to be saved in 'plant_types' mysql table
     plant_type_data = {
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     plant_type_id = cnx.insert_plant_type_data(plant_type_data)
 
     # data to be saved in 'plants' mysql table
-    plant_data = {"plant_id": "FAKE_PLANT001", "device_id": "FAKE_ARDUINO001", "creation_date": datetime_now,
+    plant_data = {"plant_id": plant_id, "device_id": "FAKE_ARDUINO001", "creation_date": datetime_now,
                   "timestamp": 12345678, "dht_temperature": 12.34, "dht_humidity": 12.34, "temperature": 12.34,
                   "luminosity_1": 1234, "luminosity_2": 1234, "humidity_1": 1234, "humidity_2": 1234,
                   "humidity_3": 1234, "plant_type_id": plant_type_id}
@@ -45,3 +46,9 @@ if __name__ == '__main__':
     # trying a SELECT statement
     result = cnx.select_plant_type_by_name(plant_type_name)
     print(f'result from select_plant_type_by_name({plant_type_name}):\n{result}\n')
+
+    results = cnx.select_plant_by_id(plant_id, 99)
+    print(f'querying select_plant_by_id({plant_id}, 99):')
+    for row in results:
+        print(f'row: {row}')
+
