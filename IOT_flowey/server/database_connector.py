@@ -12,10 +12,19 @@ import mysql.connector
 
 class DatabaseConnector:
 
+    @property
+    def cursor(self):
+        return self._cursor
+
+    @property
+    def connection(self):
+        return self._cnx
+
     def __init__(self, host=cfg.MYSQL.HOST,
                  user=cfg.MYSQL.USER,
                  passwd=cfg.MYSQL.PASSWORD,
                  database=cfg.MYSQL.DATABASE_NAME):
+        print('__init__ called')
         self._host = host
         self._user = user
         self._passwd = passwd
@@ -28,8 +37,20 @@ class DatabaseConnector:
         # self.cursor.execute("SHOW DATABASES")
 
     def __del__(self):
+        print('__del__ called')
         self._cursor.close()
-        self._cnx.close()
+        if self._cnx.is_connected():
+            self._cnx.close()
+
+    def __enter__(self):
+        print('__enter__ called')
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print('__exit__ called')
+        self._cursor.close()
+        if self._cnx.is_connected():
+            self._cnx.close()
 
     def init_tables(self):
         self._cursor.execute("CREATE TABLE IF NOT EXISTS plant_types ("
