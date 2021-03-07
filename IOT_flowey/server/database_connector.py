@@ -24,7 +24,7 @@ class DatabaseConnector:
                  user=cfg.MYSQL.USER,
                  passwd=cfg.MYSQL.PASSWORD,
                  database=cfg.MYSQL.DATABASE_NAME):
-        print('__init__ called')
+        # print('__init__ called')
         self._host = host
         self._user = user
         self._passwd = passwd
@@ -37,17 +37,17 @@ class DatabaseConnector:
         # self.cursor.execute("SHOW DATABASES")
 
     def __del__(self):
-        print('__del__ called')
+        # print('__del__ called')
         self._cursor.close()
         if self._cnx.is_connected():
             self._cnx.close()
 
     def __enter__(self):
-        print('__enter__ called')
+        # print('__enter__ called')
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        print('__exit__ called')
+        # print('__exit__ called')
         self._cursor.close()
         if self._cnx.is_connected():
             self._cnx.close()
