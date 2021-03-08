@@ -52,3 +52,17 @@ if __name__ == '__main__':
     for row in results:
         print(f'row: {row}')
 
+
+    print('Simulo funzionamento API: POST - "invio dati lettura sensori di una pianta specifica"')
+    # Simulo funzionamento API: POST - 'invio dati lettura sensori di una pianta specifica'
+    posted_data = {"plant_id": plant_id, "device_id": "FAKE_ARDUINO001", "creation_date": datetime_now,
+                  "timestamp": 9999999, "dht_temperature": 12.34, "dht_humidity": 12.34, "temperature": 12.34,
+                  "luminosity_1": 1234, "luminosity_2": 1234, "humidity_1": 1234, "humidity_2": 1234,
+                  "humidity_3": 1234, "plant_type_name": plant_type_name}
+
+    new_plant_type_row = cnx.select_plant_type_by_name(posted_data["plant_type_name"])
+    new_plant_data = dict(posted_data)
+    new_plant_data["plant_type_id"] = new_plant_type_row['id']
+
+    print(new_plant_data)
+    cnx.insert_plant_data(new_plant_data)
