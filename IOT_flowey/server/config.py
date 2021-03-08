@@ -3,6 +3,10 @@
 ################################################################################
 
 class FLASK:
+    HOST = '127.0.0.1'
+    PORT = 8080
+    DEBUG = True
+    INSTANCE_RELATIVE_CONFIG = True
     STATIC_URL_PATH = ''
     STATIC_FOLDER = 'web/static'
     TEMPLATE_FOLDER = 'web/templates'

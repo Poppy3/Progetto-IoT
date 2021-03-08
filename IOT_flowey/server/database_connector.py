@@ -30,7 +30,7 @@ class DatabaseConnector:
         self._passwd = passwd
         self._database = database
         self._cnx = mysql.connector.connect(host=host, user=user, passwd=passwd, database=database)
-        self._cursor = self._cnx.cursor()
+        self._cursor = self._cnx.cursor(dictionary=True)
         self.init_tables()
 
         # self.cursor.execute("CREATE DATABASE progetto_iot")

@@ -8,14 +8,18 @@ import config as cfg
 
 # standard libraries
 from flask import Flask, Markup, render_template
+from flask_restful import Resource, Api
 import random
 
 app = Flask(__name__,
             static_url_path=cfg.FLASK.STATIC_URL_PATH,
             static_folder=cfg.FLASK.STATIC_FOLDER,
             template_folder=cfg.FLASK.TEMPLATE_FOLDER)
+api = Api(app)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = cfg.FLASK.TEMPLATES_AUTO_RELOAD
+app.config['DEBUG'] = cfg.FLASK.DEBUG
+
 
 labels = [
     'JAN', 'FEB', 'MAR', 'APR',
@@ -58,7 +62,7 @@ def index():
 def bar():
     bar_labels = labels
     bar_values = values
-    return render_template('bar_chart.html', title='Bitcoin Monthly Price in USD', max=17000,
+    return render_template('charts/bar_chart.html', title='Bitcoin Monthly Price in USD', max=17000,
                            labels=bar_labels, values=bar_values)
 
 
@@ -66,7 +70,7 @@ def bar():
 def line():
     line_labels = labels
     line_values = values
-    return render_template('line_chart.html', title='Bitcoin Monthly Price in USD', max=17000,
+    return render_template('charts/line_chart.html', title='Bitcoin Monthly Price in USD', max=17000,
                            labels=line_labels, values=line_values)
 
 
@@ -76,14 +80,14 @@ def pie():
     pie_values = values
     pie_colors = colors
     #pie_colors = colors_rgba
-    return render_template('pie_chart.html', title='Bitcoin Monthly Price in USD', max=17000,
+    return render_template('charts/pie_chart.html', title='Bitcoin Monthly Price in USD', max=17000,
                            values=pie_values, labels=pie_labels, colors=pie_colors)
 
 
 @app.route('/time')
 def time():
-    return render_template('time_chart.html', title='Time Chart Example')
+    return render_template('charts/time_chart.html', title='Time Chart Example')
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080)
+    app.run(host=cfg.FLASK.HOST, port=cfg.FLASK.PORT)
