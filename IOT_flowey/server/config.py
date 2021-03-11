@@ -7,10 +7,12 @@ class FLASK:
     PORT = 8080
     DEBUG = True
     INSTANCE_RELATIVE_CONFIG = True
+    SECRET_KEY = 'dev'
     STATIC_URL_PATH = ''
-    STATIC_FOLDER = 'web/static'
-    TEMPLATE_FOLDER = 'web/templates'
+    STATIC_FOLDER = 'static'
+    TEMPLATE_FOLDER = 'templates'
     TEMPLATES_AUTO_RELOAD = True
+
 
 
 class MYSQL:

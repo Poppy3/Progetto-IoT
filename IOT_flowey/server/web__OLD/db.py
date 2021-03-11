@@ -4,8 +4,8 @@
 ################################################################################
 
 # local
-from .. import config as cfg
-from ..database_connector import DatabaseConnector
+import config as cfg
+from database_connector import DatabaseConnector
 
 # standard libraries
 import sqlite3
