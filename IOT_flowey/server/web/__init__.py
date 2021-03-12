@@ -17,7 +17,7 @@ def create_app(config_file='config.py'):
     db.init_app(app)
 
     # register Api resource routing here
-    api.add_resource(ResourcePlantType, '/plants/<string:plant_data_id>')
+    api.add_resource(ResourcePlantType, '/plants' ,'/plants/<string:plant_data_id>')
 
     # initialize rest api extension
     api.init_app(app)
