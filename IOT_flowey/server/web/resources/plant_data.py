@@ -4,7 +4,7 @@ from flask_restful import Resource
 
 class PlantData(Resource):
     def get(self, plant_data_id):
-        plant_data = {}  # TODO rimuovere, è solo per non avere errori
+        plant_data = { 'myKey': 'myValue', "plant_id": plant_data_id }  # TODO rimuovere, è solo per non avere errori
         # TODO get plant_data from db
         return jsonify(plant_data)
 

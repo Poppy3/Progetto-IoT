@@ -1,4 +1,4 @@
-from web.extensions.sqlalchemy import db
+from ..extensions.sqlalchemy import db
 import datetime
 
 
