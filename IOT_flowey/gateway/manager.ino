@@ -116,7 +116,7 @@ void print_values_as_json(float dht_t, float dht_h,
                           int h1, int h2, int h3)
 {
   Serial.print("{");
-  Serial.print("\"device_id\":\"");     Serial.print(device_id); Serial.print("\",");
+  Serial.print("\"gateway_id\":\"");    Serial.print(device_id); Serial.print("\",");
   Serial.print("\"timestamp\":");       Serial.print(millis());  Serial.print(",");
   Serial.print("\"dht_temperature\":"); Serial.print(dht_t);     Serial.print(",");
   Serial.print("\"dht_humidity\":");    Serial.print(dht_h);     Serial.print(",");

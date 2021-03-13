@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Pylons Project">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/chart.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart_defaults_global.js') }}?dev={{ randint(0, 1000000) }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="col-2">
+            <a href="{{ url_for('main.main_index') }}" class="navbar-brand mr-0 mr-md-2">
+                <img class="logo img-fluid" src="{{ url_for('static', filename='img/favicon.ico') }}" alt="logo">
+            </a>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#">Disabled</a>
+            </li>
+          </ul>
+    </nav>
+</header>
+<main role="main" class="container">
+    <div class="starter-template">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-10">
+                    {% block content %}
+                        <p>No content</p>
+                    {% endblock content %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+<footer class="mt-auto bg-light text-center text-lg-start">
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        Copyright &copy; <a href="https://github.com/Poppy3/Progetto-IoT" target="_blank">IoT Project</a>
+    </div>
+</footer>
+</body>
+</html>

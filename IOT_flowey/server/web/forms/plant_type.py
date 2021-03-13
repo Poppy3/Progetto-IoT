@@ -1,13 +1,8 @@
-from ..extensions.sqlalchemy import db
-import datetime
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, TextField, FloatField
 
 
-class PlantTypeModel(db.Model):
-    __tablename__ = 'plant_type'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    last_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
-
+class PlantTypeForm(FlaskForm):
     name = db.Column(db.String(length=128), nullable=False, unique=True)
     description = db.Column(db.Text)
     humidity_min = db.Column(db.Float)
@@ -19,5 +14,3 @@ class PlantTypeModel(db.Model):
     temperature_min = db.Column(db.Float)
     temperature_max = db.Column(db.Float)
     temperature_tolerance_time = db.Column(db.Integer)
-
-    plant_data = db.relationship('PlantDataModel', backref='plant_type', lazy=True)

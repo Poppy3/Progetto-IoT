@@ -1,7 +1,9 @@
 import os
 
 # flask configuration file
+BUNDLE_ERRORS = True
 DEBUG = True
+SECRET_KEY = 'This1Is2A3Secret4Key5'
 TEMPLATES_AUTO_RELOAD = True
 
 #SQLALCHEMY_DATABASE_URI = 'mysql://sql11398075:X3LHKv2R4k@sql11.freemysqlhosting.net/sql11398075'

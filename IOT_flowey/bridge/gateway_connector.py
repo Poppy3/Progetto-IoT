@@ -17,11 +17,13 @@ class GatewayConnector:
     # SERIAL_PORT = 'COM3'
     # SERIAL_NUM = 9600
 
-    def __init__(self, serial_port='COM3', serial_num=9600, status=0):
+    def __init__(self, serial_port='COM3', serial_num=9600, status=0, local_mode=cfg.GATEWAY_CONNECTOR.LOCAL_MODE):
         self._serial_port = serial_port
         self._serial_num = serial_num
-        self._ser = serial.Serial(serial_port, serial_num)
         self._status_code = status
+        self._local_mode = local_mode
+        if self._local_mode is not True:
+            self._ser = serial.Serial(serial_port, serial_num)
 
     def readline(self):
         """ expecting this data format from the serial channel of the arduino
@@ -38,6 +40,23 @@ class GatewayConnector:
             "humidity_3" : 1234
         }
         """
+        if self._local_mode:  # TODO dopo aver collegato l'arduino, si può rimuovere questo blocco
+            sample_data = {
+                "gateway_id": "ARDUINO001",
+                "timestamp": 1234,
+                "dht_temperature": 12.34,
+                "dht_humidity": 12.34,
+                "temperature": 12.34,
+                "luminosity_1": 1234,
+                "luminosity_2": 1234,
+                "humidity_1": 1234,
+                "humidity_2": 1234,
+                "humidity_3": 1234
+            }
+            time.sleep(cfg.GATEWAY_CONNECTOR.READ_INTERVAL_TIME)
+            return sample_data
+
+        # self._local_mode == False
         for i in range(cfg.GATEWAY_CONNECTOR.READ_MAX_TRIES):  # max tentatives
             s = self._ser.readline()  # as binary
             if s is not None:

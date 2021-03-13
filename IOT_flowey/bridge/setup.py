@@ -7,10 +7,10 @@
 import config as cfg
 
 # standard libraries
+from pathlib import Path
 import argparse
 import json
 import uuid
-from pathlib import Path
 
 
 parser = argparse.ArgumentParser(description='Register a new gateway connection or remove an existing one')

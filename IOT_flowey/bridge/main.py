@@ -4,16 +4,17 @@
 ################################################################################
 
 # local
-import config as cfg
 from gateway_connector import GatewayConnector
+from server_connector import ServerConnector
 from utils import debug
+import config as cfg
 
 # standard libraries
+from pathlib import Path
+from serial import SerialException
 import datetime
 import json
 import multiprocessing as mp
-from pathlib import Path
-from serial import SerialException
 
 
 def run_gateway_connector(connection):
@@ -24,21 +25,29 @@ def run_gateway_connector(connection):
     debug(f'Running run_gateway_connector with parameters: {connection}')
 
     try:
-        connector = GatewayConnector(serial_port, serial_number)
+        gtw_cnx = GatewayConnector(serial_port, serial_number)
+
+        # TODO quando si usa ngrok si può rimuovere il parametro local_mode_suffix da qui sotto
+        srv_cnx = ServerConnector(local_mode_suffix=f'{serial_port}-{serial_number}')
+
         while True:
             try:
-                data = connector.readline()
+                data = gtw_cnx.readline()
                 debug(f'Serial data received: {data}')
                 if data is not None:
                     # TODO - aggiungi dati e passali all'API del datacenter
                     data['plant_id'] = uuid
                     data['plant_type_name'] = plant_type_name
                     data['creation_date'] = datetime.datetime.now().isoformat()
-                    # TODO - altro
-                    pass
+                    data['bridge_id']  = cfg.BRIDGE_ID
+
+                    debug(f'Sending data = {data}')
+                    response = srv_cnx.send_plant_data(data)
+                    debug(f'Received response = [{response.status_code}] {response.content}')
+
             except Exception as e:
                 print(f'ERROR - Raised exception {e}\n{e.args}')
-                break
+                raise e
     except SerialException as e:
         print(f'ERROR - could not open connection to serial-port={serial_port} and serial-number={serial_number}')
 
