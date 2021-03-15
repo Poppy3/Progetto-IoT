@@ -41,7 +41,7 @@ class PlantDataListAPI(Resource):
         if plant_type is None:
             status_code = 404
             message = f'No plant_type registered with the given "plant_type_name" = {args.plant_type_name}'
-            return make_response(jsonify({'status_code':status_code, 'message': message}), status_code)
+            return make_response(jsonify({'status_code': status_code, 'message': message}), status_code)
 
         plant_data = PlantDataModel(plant_id=args.plant_id,
                                     plant_type_id=plant_type.id,

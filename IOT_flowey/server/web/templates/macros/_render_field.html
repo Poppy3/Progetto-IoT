@@ -1,0 +1,69 @@
+{% macro render_field(field) %}
+    <label for="{{ field.id }}" class="col-sm-3 col-form-label">
+        {{ field.label.text }}{% if field.flags.required %}*{% endif %}
+    </label>
+    {% if field.type in ['IntegerField','FloatField','DecimalField'] %}
+        <div class="col-sm-4">
+            <input type="number"
+                   class="form-control {% if field.errors|length > 0 %}is-invalid{% endif %}"
+                   id="{{ field.id }}"
+                   name="{{ field.name }}"
+                   placeholder="{{ field.label.text }}{% if field.flags.required %}*{% endif %}"
+                   value="{{ field.data if not None }}"
+                   aria-describedby="{{ field.id }}--help {{ field.id }}--feedback"
+                   {% if field.flags.required %}required{% endif %}
+                   {% if field.type == 'IntegerField' %}step="1"{% endif %}
+                   min="{{ (field.validators|selectattr('__class__.__name__', 'eq', 'NumberRange')|first).min if not None }}"
+                   max="{{ (field.validators|selectattr('__class__.__name__', 'eq', 'NumberRange')|first).max if not None }}"
+            />
+            <div class="invalid-feedback" id="{{ field.id }}--feedback">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        </div>
+        <small id="{{ field.id }}--help" class="form-text text-muted col-sm-5">
+            {{ field.description }}
+        </small>
+    {% elif field.type in ['TextAreaField'] %}
+        <div class="col">
+            <textarea
+                   class="form-control {% if field.errors|length > 0 %}is-invalid{% endif %}"
+                   id="{{ field.id }}"
+                   name="{{ field.name }}"
+                   placeholder="{{ field.label.text }}{% if field.flags.required %}*{% endif %}"
+                   aria-describedby="{{ field.id }}--help {{ field.id }}--feedback"
+                   {% if field.flags.required %}required{% endif %}
+            >{{ field.data if field.data }}</textarea>
+            <div class="invalid-feedback" id="{{ field.id }}--feedback">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="w-100"></div>
+        <small id="{{ field.id }}--help" class="form-text text-muted col offset-sm-3">
+            {{ field.description }}
+        </small>
+        {% else %}
+            <div class="col-sm-4">
+                <input type="text"
+                       class="form-control {% if field.errors|length > 0 %}is-invalid{% endif %}"
+                       id="{{ field.id }}"
+                       name="{{ field.name }}"
+                       placeholder="{{ field.label.text }}{% if field.flags.required %}*{% endif %}"
+                       value="{{ field.data if field.data }}"
+                       aria-describedby="{{ field.id }}--help {{ field.id }}--feedback"
+                       {% if field.flags.required %}required{% endif %}
+                />
+                <div class="invalid-feedback" id="{{ field.id }}--feedback">
+                    {% for error in field.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            </div>
+            <small id="{{ field.id }}--help" class="form-text text-muted col-sm-5">
+                {{ field.description }}
+            </small>
+        {% endif %}
+{% endmacro %}

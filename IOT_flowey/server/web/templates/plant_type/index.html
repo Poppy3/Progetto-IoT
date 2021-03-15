@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{# puts the .active class into base.html navbar link #}
+{% block active_navlink__plant_type %}
+active
+{% endblock %}
+
+{% block content %}
+    INDEX - Plant Type<br/>
+    TODO - TODO - TODO<br/>
+    <br/>
+    <a href="{{ url_for('plant_type.plant_type_forms') }}">Go to Creation Form</a>
+{% endblock %}

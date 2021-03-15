@@ -1,0 +1,92 @@
+{% from "macros/_render_field.html" import render_field %}
+
+{% extends "base.html" %}
+
+{# puts the .active class into base.html navbar link #}
+{% block active_navlink__plant_type %}
+active
+{% endblock %}
+
+{% block content %}
+    <h2>Create Plant-Type</h2>
+    <p class="lead">
+        Register a new Plant-Type with ideal values that will be used to check your plants health.
+    </p>
+    <hr/>
+    {% if error is not none %}
+        <div class="alert alert-danger" role="alert">
+            <span>{{ error }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+    {% if success is not none %}
+        <div class="alert alert-success" role="alert">
+            <span>{{ success }}</span>
+            <a href="{{ url_for('plant_type.plant_type_index') }}" role="button" class="btn btn-outline-success ml-4">Go Back</a>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+    <form method="POST" action="{{ url_for('plant_type.plant_type_forms') }}">
+        {{ plant_type_form.csrf_token }}
+
+        <fieldset class="form-group">
+            <legend>General Information</legend>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.name) }}
+            </div>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.description) }}
+            </div>
+        </fieldset>
+        <hr/>
+        <fieldset class="form-group">
+            <legend>Humidity</legend>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.humidity_min) }}
+            </div>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.humidity_max) }}
+            </div>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.humidity_tolerance_time) }}
+            </div>
+        </fieldset>
+        <hr/>
+        <fieldset class="form-group">
+            <legend>Luminosity</legend>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.luminosity_min) }}
+            </div>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.luminosity_max) }}
+            </div>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.luminosity_tolerance_time) }}
+            </div>
+        </fieldset>
+        <hr/>
+        <fieldset class="form-group">
+            <legend>Temperature</legend>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.temperature_min) }}
+            </div>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.temperature_max) }}
+            </div>
+            <div class="form-group form-row">
+                {{ render_field(plant_type_form.temperature_tolerance_time) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group form-row justify-content-center">
+            <!-- show only on small screens -->
+            <button type="submit" class="btn btn-primary btn-block d-block d-sm-none">Submit</button>
+            <!-- show only on larger screens -->
+            <button type="submit" class="btn btn-primary d-none d-sm-block">Submit</button>
+        </fieldset>
+    </form>
+{% endblock %}
