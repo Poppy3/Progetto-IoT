@@ -24,13 +24,13 @@ active
     {% if success is not none %}
         <div class="alert alert-success" role="alert">
             <span>{{ success }}</span>
-            <a href="{{ url_for('plant_type.plant_type_index') }}" role="button" class="btn btn-outline-success ml-4">Go Back</a>
+            <a href="{{ url_for('plant_type.index') }}" role="button" class="btn btn-outline-success ml-4">Go Back</a>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
     {% endif %}
-    <form method="POST" action="{{ url_for('plant_type.plant_type_forms') }}">
+    <form method="POST" action="{{ url_for('plant_type.create_form') }}">
         {{ plant_type_form.csrf_token }}
 
         <fieldset class="form-group">

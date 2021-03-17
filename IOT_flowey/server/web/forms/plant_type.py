@@ -9,9 +9,9 @@ class PlantTypeForm(FlaskForm):
     description = TextAreaField('Description', description='Plant Description',
                                 validators=[Length(max=5000), Optional()])
     humidity_min = DecimalField('Humidity Min', description='Minimum humidity that the plant should endure',
-                                validators=[NumberRange(min=0, max=100), Optional()])
+                                validators=[NumberRange(min=0, max=2000000000), Optional()])
     humidity_max = DecimalField('Humidity Max', description='Maximum humidity that the plant should endure',
-                                validators=[NumberRange(min=0, max=100), Optional()])
+                                validators=[NumberRange(min=0, max=2000000000), Optional()])
     humidity_tolerance_time = IntegerField('Tolerance Time',
                                            description='Maximum time (in seconds) allowed for the plant '
                                                        'should it endure adverse humidity levels',

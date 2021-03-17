@@ -9,6 +9,6 @@ import config as cfg
 # -- NONE --
 
 
-def debug(message):
-    if cfg.DEBUG:
+def debug(message, level=1):
+    if cfg.DEBUG != 0 and level <= cfg.DEBUG:
         print(f'DEBUG - {message}')

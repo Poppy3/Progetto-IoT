@@ -5,6 +5,7 @@
 
 # local
 import config as cfg
+from utils import debug
 
 # standard libraries
 import json
@@ -40,6 +41,7 @@ class GatewayConnector:
             "humidity_3" : 1234
         }
         """
+        debug('called readline', 2)
         if self._local_mode:  # TODO dopo aver collegato l'arduino, si può rimuovere questo blocco
             sample_data = {
                 "gateway_id": "ARDUINO001",
@@ -58,13 +60,17 @@ class GatewayConnector:
 
         # self._local_mode == False
         for i in range(cfg.GATEWAY_CONNECTOR.READ_MAX_TRIES):  # max tentatives
+            debug(f'Trying to read serial data. {i}...', 2)
             s = self._ser.readline()  # as binary
             if s is not None:
+                debug(f'Read serial data: {s}', 2)
                 try:  # first line of serial may be not complete
                     js = json.loads(s.decode())
                     return js
                 except ValueError:
+                    debug('DEBUG - gateway readline() got ValueError', 2)
                     time.sleep(cfg.GATEWAY_CONNECTOR.READ_TOLERANCE_TIME)
+            debug('DEBUG - gateway waiting for readline()...', 2)
             time.sleep(cfg.GATEWAY_CONNECTOR.READ_INTERVAL_TIME)
         return None
 

@@ -3,7 +3,7 @@
 ################################################################################
 
 class GATEWAY_CONNECTOR:
-    LOCAL_MODE = True  # TODO - impostare a False per la comunicazione con arduino
+    LOCAL_MODE = False  # TODO - impostare a False per la comunicazione con arduino
     READ_MAX_TRIES = 10
     READ_INTERVAL_TIME = 2.0
     READ_TOLERANCE_TIME = 0.33
@@ -21,4 +21,4 @@ class SERVER_CONNECTOR:
 
 BRIDGE_ID = 'RASPBERRY001'
 CONNECTIONS_STORAGE_FILENAME = 'connections_storage.json'
-DEBUG = True
+DEBUG = 1

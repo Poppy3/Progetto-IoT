@@ -76,7 +76,7 @@ class ServerConnector:
         try:
             with p.open('a') as f:
                 if write_header:
-                    f.write('"plant_id","plant_type_name","creation_date","bridge_id"'
+                    f.write('"plant_id","plant_type_name","creation_date","bridge_id",'
                             '"gateway_id","timestamp","dht_temperature","dht_humidity",'
                             '"temperature","luminosity_1","luminosity_2",'
                             '"humidity_1","humidity_2","humidity_3"')
@@ -94,7 +94,7 @@ class ServerConnector:
                 f.write('"{}",'.format(data.get("luminosity_2") if data.get("luminosity_2") is not None else ''))
                 f.write('"{}",'.format(data.get("humidity_1") if data.get("humidity_1") is not None else ''))
                 f.write('"{}",'.format(data.get("humidity_2") if data.get("humidity_2") is not None else ''))
-                f.write('"{}",'.format(data.get("humidity_3") if data.get("humidity_3") is not None else ''))
+                f.write('"{}"'.format(data.get("humidity_3") if data.get("humidity_3") is not None else ''))
                 return
         except FileNotFoundError:
             print('FILE NOT FOUND ERROR in _save_data_to_local_file')
