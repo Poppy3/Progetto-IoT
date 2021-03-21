@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy.exc import OperationalError
 
 
-plant_type_bp = Blueprint('plant_type', __name__, url_prefix='/plant_type')
+plant_type_bp = Blueprint('plant_type', __name__, url_prefix='/plant_types')
 
 
 @plant_type_bp.context_processor
@@ -29,7 +29,6 @@ def utility_human_readable_time():
     return dict(human_readable_time=human_readable_time)
 
 
-@plant_type_bp.route('/index')
 @plant_type_bp.route('/')
 def list_all():
     page = request.args.get('page', default=1, type=int)
