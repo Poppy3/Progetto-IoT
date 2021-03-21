@@ -54,7 +54,7 @@ def details(plant_type_id):
 
 
 @plant_type_bp.route('/<int:plant_type_id>/delete')
-def delete(plant_type_id=None):
+def delete(plant_type_id):
     plant_type = PlantTypeModel.query.get_or_404(plant_type_id)
     db.session.delete(plant_type)
     db.session.commit()
