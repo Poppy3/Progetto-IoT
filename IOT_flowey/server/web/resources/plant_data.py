@@ -24,17 +24,16 @@ post_parser.add_argument("temperature", type=float)
 
 class PlantDataAPI(Resource):
     def get(self, plant_data_id=None):
-        # TODO prendi i dati dal db MODEL e restituisci quello desiderato
-        plant_data = {'TODO': 'TODO',
-                      'plant_id': plant_data_id,
-                      'message': 'TODO - qui riceveresti i dati della PlantData voluta, se esiste'}
+        plant_data = None
+        if plant_data_id is not None:
+            plant_data = PlantDataModel.query.get(plant_data_id)
         return jsonify(plant_data)
 
 
 class PlantDataListAPI(Resource):
     def get(self):
-        # TODO prendi i dati dal db MODEL e restituisci la lista
-        return f'TODO - qui riceveresti la lista di PlantData'
+        plant_datas = PlantDataModel.query.all()
+        return jsonify(plant_datas)
 
     def post(self):
         args = post_parser.parse_args()
@@ -60,4 +59,4 @@ class PlantDataListAPI(Resource):
                                     temperature=args.temperature)
         db.session.add(plant_data)
         db.session.commit()
-        return jsonify({'id': plant_data.id})
+        return jsonify(plant_data)

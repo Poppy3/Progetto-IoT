@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy.exc import OperationalError
 
 
-plant_type_bp = Blueprint('plant_type', __name__, url_prefix='/plant_types')
+plant_type_bp = Blueprint('plant_type', __name__, url_prefix='/plant_type')
 
 
 @plant_type_bp.context_processor
@@ -47,7 +47,6 @@ def list_all():
 @plant_type_bp.route('/<int:plant_type_id>')
 def details(plant_type_id):
     plant_type = PlantTypeModel.query.get_or_404(plant_type_id)
-
     return render_template('plant_type/details.html',
                            title='Plant-Type Details',
                            plant_type_model=plant_type)
@@ -58,7 +57,6 @@ def delete(plant_type_id):
     plant_type = PlantTypeModel.query.get_or_404(plant_type_id)
     db.session.delete(plant_type)
     db.session.commit()
-
     return redirect(url_for('plant_type.list_all'))
 
 
@@ -68,7 +66,6 @@ def create():
     form = PlantTypeForm(obj=model)
     error = None
     success = None
-
     if form.validate_on_submit():
         # received valid form
         check_exists = PlantTypeModel.query.filter_by(name=form.name.data).first()
@@ -80,7 +77,6 @@ def create():
             db.session.add(model)
             db.session.commit()
             success = 'Successfully created a new plant type.'
-
     return render_template('plant_type/form.html',
                            title='Create Plant-Type',
                            plant_type_form=form,
@@ -96,7 +92,6 @@ def edit(plant_type_id):
     form = PlantTypeForm(obj=plant_type)
     error = None
     success = None
-
     if form.validate_on_submit():
         # received valid form
         check_exists = PlantTypeModel.query.filter_by(name=form.name.data).first()
@@ -106,7 +101,6 @@ def edit(plant_type_id):
             form.populate_obj(plant_type)
             db.session.commit()
             success = 'Successfully edited the plant type.'
-
     return render_template('plant_type/form_edit.html',
                            title='Edit Plant-Type',
                            plant_type_model=plant_type,
