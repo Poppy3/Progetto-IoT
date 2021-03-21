@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <!-- Project CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', dev=randint(0, 1000000)) }}">
 
     <!-- jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -18,9 +18,9 @@
     <!-- Chart JS -->
     <script src="{{ url_for('static', filename='js/chart.bundle.min.js') }}"></script>
     <!-- Chart global defaults -->
-    <script src="{{ url_for('static', filename='js/chart_defaults_global.js') }}?dev={{ randint(0, 1000000) }}"></script>
+    <script src="{{ url_for('static', filename='js/chart_defaults_global.js', dev=randint(0, 1000000)) }}"></script>
     <!-- Project JS -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js', dev=randint(0, 1000000)) }}"></script>
 
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <title>{{ title }}</title>
@@ -62,5 +62,6 @@
         Copyright &copy; <a href="https://github.com/Poppy3/Progetto-IoT" target="_blank">IoT Project</a>
     </div>
 </footer>
+{% block modal %}{% endblock %}
 </body>
 </html>

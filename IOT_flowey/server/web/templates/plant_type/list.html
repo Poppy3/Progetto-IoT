@@ -6,12 +6,12 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="row mb-3">
-    <div class="col col-md-6">
-        <h1 class="float-md-left">Plant Types</h1>
+<div class="row mb-3 align-items-center">
+    <div class="col">
+        <h1>Plant Types</h1>
     </div>
-    <div class="col-auto col-md-6">
-        <a class="btn btn-primary float-md-right my-2" href="{{ url_for('plant_type.create_form') }}" role="button">
+    <div class="col-auto">
+        <a class="btn btn-primary my-2" href="{{ url_for('plant_type.create') }}" role="button">
             <span class="d-none d-md-inline">Create a Plant</span>
             <i class="d-inline d-md-none bi bi-plus"></i>
         </a>

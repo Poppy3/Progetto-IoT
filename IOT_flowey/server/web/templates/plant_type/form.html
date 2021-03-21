@@ -8,18 +8,20 @@ active
 {% endblock %}
 
 {% block content %}
-    {% if mode == 'EDIT' %}
-        <h2>Edit Plant-Type</h2>
-        <p class="lead">
-            Modify an existing Plant-Type with ideal values that will be used to check your plants' health.
-        </p>
-    {% else %}
-        <h2>Create Plant-Type</h2>
-        <p class="lead">
-            Register a new Plant-Type with ideal values that will be used to check your plants' health.
-        </p>
-    {% endif %}
-
+    {% block plant_type_form_title %}
+        <div class="row align-items-center">
+            <div class="col">
+                <h2>Create Plant-Type</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p class="lead">
+                    Register a new Plant-Type with ideal values that will be used to check your plants' health.
+                </p>
+            </div>
+        </div>
+    {% endblock %}
     <hr/>
     {% if error is not none %}
         <div class="row align-items-center alert alert-danger px-1" role="alert">
