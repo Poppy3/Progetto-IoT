@@ -23,6 +23,6 @@ class PlantTypeModel(db.Model):
 
     plant_data = db.relationship('PlantDataModel', backref='plant_type', lazy=True)
 
-    @validates('name')
-    def convert_lower(self, key, value):
-        return value.lower()
+    #@validates('name')
+    #def convert_lower(self, key, value):
+    #    return value.lower()

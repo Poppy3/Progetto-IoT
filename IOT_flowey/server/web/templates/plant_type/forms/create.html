@@ -8,29 +8,44 @@ active
 {% endblock %}
 
 {% block content %}
-    <h2>Create Plant-Type</h2>
-    <p class="lead">
-        Register a new Plant-Type with ideal values that will be used to check your plants health.
-    </p>
+    {% if mode == 'EDIT' %}
+        <h2>Edit Plant-Type</h2>
+        <p class="lead">
+            Modify an existing Plant-Type with ideal values that will be used to check your plants' health.
+        </p>
+    {% else %}
+        <h2>Create Plant-Type</h2>
+        <p class="lead">
+            Register a new Plant-Type with ideal values that will be used to check your plants' health.
+        </p>
+    {% endif %}
+
     <hr/>
     {% if error is not none %}
-        <div class="alert alert-danger" role="alert">
-            <span>{{ error }}</span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="row align-items-center alert alert-danger px-1" role="alert">
+            <div class="col">
+                <span>{{ error }}</span>
+            </div>
+            <div class="col-auto align-self-start">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         </div>
     {% endif %}
     {% if success is not none %}
-        <div class="alert alert-success" role="alert">
-            <span>{{ success }}</span>
-            <a href="{{ url_for('plant_type.index') }}" role="button" class="btn btn-outline-success ml-4">Go Back</a>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="row align-items-center alert alert-success px-1" role="alert">
+            <div class="col">
+                <span>{{ success }}</span>
+            </div>
+            <div class="col-auto align-self-start">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         </div>
     {% endif %}
-    <form method="POST" action="{{ url_for('plant_type.create_form') }}">
+    <form method="POST" action="{{ url_for(**form_endpoint) }}">
         {{ plant_type_form.csrf_token }}
 
         <fieldset class="form-group">
@@ -83,10 +98,9 @@ active
         </fieldset>
 
         <fieldset class="form-group form-row justify-content-center">
-            <!-- show only on small screens -->
-            <button type="submit" class="btn btn-primary btn-block d-block d-sm-none">Submit</button>
-            <!-- show only on larger screens -->
-            <button type="submit" class="btn btn-primary d-none d-sm-block">Submit</button>
+            <a href="{{ url_for(**back_endpoint) }}" role="button"
+               class="btn btn-outline-secondary mx-3">Cancel</a>
+            <button type="submit" class="btn btn-primary mx-3">Submit</button>
         </fieldset>
     </form>
 {% endblock %}

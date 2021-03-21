@@ -1,0 +1,62 @@
+/**
+ * This file contains any custom styles created by us
+ */
+
+
+.collapsable [data-toggle="collapse"] {
+    /*display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f054";*/
+    transform: rotate(90deg) ;
+    transition: all linear 0.25s;
+}
+.collapsable [data-toggle="collapse"].collapsed {
+    transform: rotate(0deg) ;
+}
+
+table.table-fit {
+    width: auto !important;
+    table-layout: auto !important;
+}
+table.table-fit thead th,
+table.table-fit tfoot th {
+    width: auto !important;
+}
+table.table-fit tbody td,
+table.table-fit tfoot td {
+    width: auto !important;
+}
+.table td.fit,
+.table th.fit {
+    white-space: nowrap;
+    width: 1%;
+}
+
+tr.pb-0 th,
+tr.pb-0 td {
+    padding-bottom: 0 !important;
+}
+tr.pt-0 th,
+tr.pt-0 td {
+    padding-top: 0 !important;
+}
+tr.pl-0 th,
+tr.pl-0 td {
+    padding-left: 0 !important;
+}
+tr.pr-0 th,
+tr.pr-0 td {
+    padding-right: 0 !important;
+}
+
+.table thead.thead-double tr:first-of-type th {
+    border-bottom: none;
+}
+.table thead.thead-double tr:nth-of-type(2) th {
+    border-top: none;
+    padding-top: 0;
+}

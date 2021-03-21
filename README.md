@@ -9,6 +9,9 @@ Per l'interfaccia pensavamo a telegram, come una chat di comunicazione con la tu
 
 https://docs.google.com/document/d/1bADpilcZcmvr3uMJ3wHkrVnHlY_TWHJ9U9sN4OMp0S4/edit?usp=sharing
 
+#### Diagramma del circuito
+https://crcit.net/c/697250fc32ca43e58887fc6bf4d58ace
+
 #### Risorse
 
 -- Tutorial su bot telegram

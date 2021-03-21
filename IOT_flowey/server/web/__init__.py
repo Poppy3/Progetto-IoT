@@ -31,7 +31,7 @@ def create_app(config_file='config.py'):
 
     # register blueprints
     app.register_blueprint(main)
-    app.register_blueprint(plant_type_bp, )
+    app.register_blueprint(plant_type_bp)
     # todo resto
 
 

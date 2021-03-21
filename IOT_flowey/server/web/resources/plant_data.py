@@ -3,6 +3,7 @@ from ..models.plant_type import PlantTypeModel
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, inputs
 
+
 post_parser = reqparse.RequestParser()
 post_parser.add_argument("plant_id", type=str, required=True, nullable=False)
 post_parser.add_argument("plant_type_name", type=str, required=True, nullable=False)
