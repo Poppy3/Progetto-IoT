@@ -16,6 +16,8 @@ def _build_filename(filename, suffix):
     assert isinstance(suffix, str) or suffix is None, 'suffix, when not None, must be a string'
 
     if suffix is not None:
+        suffix = suffix.replace('/', '')
+        suffix = suffix.replace('\\', '')
         return '{0}_{2}.{1}'.format(*filename.rsplit('.', 1), suffix)
     return filename
 
