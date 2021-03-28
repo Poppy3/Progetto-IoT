@@ -10,5 +10,27 @@ import config as cfg
 
 
 def debug(message, level=1):
-    if cfg.DEBUG != 0 and level <= cfg.DEBUG:
+    if cfg.DEBUG_LEVEL and level <= cfg.DEBUG_LEVEL:
         print(f'DEBUG - {message}')
+
+
+def error(message):
+    print(f'ERROR - {message}')
+
+
+def info(message):
+    print(f'INFO - {message}')
+
+
+def warning(message):
+    print(f'WARNING - {message}')
+
+
+def compose_filename(filename, suffix):
+    assert isinstance(filename, str), 'filename must be a string'
+    assert isinstance(suffix, str) or suffix is None, 'suffix, when not None, must be a string'
+
+    if suffix is not None:
+        suffix = suffix.replace('/', '.').replace('\\', '.')
+        return '{0}_{2}.{1}'.format(*filename.rsplit('.', 1), suffix)
+    return filename
