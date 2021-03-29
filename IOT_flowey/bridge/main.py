@@ -6,7 +6,7 @@
 # local
 from gateway_connector import GatewayConnector
 from server_connector import ServerConnector
-from utils import compose_filename, debug, error, info, warning
+from utils import compose_filename, purge_filename, debug, error, info, warning
 import config as cfg
 
 # standard libraries
@@ -15,7 +15,6 @@ from pathlib import Path
 from serial import SerialException
 from requests import ConnectionError
 import datetime
-import portalocker as lock
 import json
 import multiprocessing as mp
 import os
@@ -30,49 +29,48 @@ def initializer():
 
 def run_unsent_data_worker(port):
     debug(f'run_unsent_data_worker() pid = {os.getpid()}')
-    p = Path(__file__).with_name(compose_filename(cfg.UNSENT_DATA_BUFFER_FILENAME, suffix=port))
+    buffer_dir_path = Path(__file__).with_name('_' + purge_filename(port))
     srv_cnx = ServerConnector(suffix=port)
-    n = cfg.UNSENT_DATA_BUFFER_DIM
+
     while True:
-        if p.is_file():
-            # read data and try to send it, keep unsent data
-            with lock.Lock(p, 'r', timeout=10, buffering=n) as f:
-                data_to_keep = []
-                for line in f.readlines():
+        if buffer_dir_path.is_dir():
+            for buffer_path in sorted(buffer_dir_path.glob(compose_filename(cfg.UNSENT_DATA_BUFFER_FILENAME, suffix='*'))):
+                # read data and try to send it, keep unsent data
+                with buffer_path.open('r+', buffering=1) as f:
+                    delete_file = False
                     try:
-                        data = json.loads(line)
+                        data = json.load(f)
                     except JSONDecodeError:
-                        continue
+                        error(f'Error while decoding {buffer_path.absolute()}. It will be deleted.')
+                        delete_file = True
+                    else:
+                        tries = data.get('tries', 0)
+                        try:
+                            response = srv_cnx.send_plant_data(data)
+                            if response is not None and response.status_code == 201:  # 201 - created
+                                delete_file = True
+                            else:
+                                tries += 1
+                        except ConnectionError:
+                            tries += 1
 
-                    keep_data = False
-                    try:
-                        response = srv_cnx.send_plant_data(data)
-                        if response is None or response.status_code != 201:  # 201 - created
-                            keep_data = True
-                    except ConnectionError:
-                        keep_data = True
-                    if keep_data:
-                        data_to_keep.append(data)
+                        if tries > cfg.UNSENT_DATA_MAX_TRIES:
+                            warning(f'Exceeded max tries ({cfg.UNSENT_DATA_MAX_TRIES}) for {buffer_path.absolute()}. '
+                                    f'It will be deleted.')
+                            delete_file = True
 
-            if len(data_to_keep) == 0:
-                try:
-                    debug(f'Removing {p.absolute()}')
-                    p.unlink()  # delete file
-                except Exception as e:
-                    # TODO verifica questa operazione in caso di race conditions
-                    error(f'Dovresti gestire questa eccezione: {e}')
-                    raise e
-            else:
-                # save last n unsent data
-                first_line = True
-                with lock.Lock(p, 'w', timeout=10, buffering=1) as f:
-                    for data in data_to_keep[-n:]:
-                        if first_line:
-                            first_line = False
-                        else:
-                            f.write('\n')
+                    if delete_file:
+                        debug(f'Removing {buffer_path.absolute()}')
+                        f.close()
+                        buffer_path.unlink()  # delete file
+                    else:
+                        # keep file, but increment 'tries' value and save it
+                        data['tries'] = tries
                         debug(f'run_unsent_data_worker - Writing {data} into buffer file')
+                        f.seek(0)
                         json.dump(data, f, sort_keys=True)
+                        f.truncate()
+            # end for
         time.sleep(cfg.UNSENT_DATA_BUFFER_INTERVAL_TIME)
 
 
@@ -87,7 +85,8 @@ def run_bridge_worker(connection):
     try:
         gtw_cnx = GatewayConnector(port, baudrate)
         srv_cnx = ServerConnector(suffix=port)
-        buffer_path = Path(__file__).with_name(compose_filename(cfg.UNSENT_DATA_BUFFER_FILENAME, suffix=port))
+        buffer_dir_path = Path(__file__).with_name('_' + purge_filename(port))
+        buffer_dir_path.mkdir(parents=True, exist_ok=True)
         index = 0
 
         while True:
@@ -99,16 +98,18 @@ def run_bridge_worker(connection):
                 gtw_cnx.reopen()
                 continue
 
+            creation_date = datetime.datetime.now()
+
             data['plant_id'] = uuid
             data['plant_type_name'] = plant_type_name
-            data['creation_date'] = datetime.datetime.now().isoformat()
+            data['creation_date'] = creation_date.isoformat()
             data['bridge_id'] = cfg.BRIDGE_ID
             data['_index'] = index
             index += 1
 
             save_unsent_data = False
             try:
-                debug(f'run_bridge_worker - Sending data = {data}', 2)
+                debug(f'run_bridge_worker - Sending data = {data}')
                 response = srv_cnx.send_plant_data(data)
                 if response is not None:
                     debug(f'run_bridge_worker - Received response = ({response.status_code}) {response.content}', 2)
@@ -118,17 +119,17 @@ def run_bridge_worker(connection):
                 save_unsent_data = True
 
             if save_unsent_data:
+                buffer_path = buffer_dir_path / compose_filename(cfg.UNSENT_DATA_BUFFER_FILENAME,
+                                                                 suffix=creation_date.strftime("%Y%m%d_%H%M%S"))
                 try:
-                    write_newline = buffer_path.exists()
-                    with lock.Lock(buffer_path, 'a', timeout=10, buffering=1) as f:
-                        debug('run_bridge_worker - Writing data to unsent_data buffer file')
-                        if write_newline:
-                            f.write('\n')
+                    with buffer_path.open('w', buffering=1) as f:
+                        debug(f'run_bridge_worker - Writing data to unsent_data buffer file {buffer_path.absolute()}')
                         json.dump(data, f, sort_keys=True)
                 except FileNotFoundError:
                     error(f'FileNotFoundError for {buffer_path.absolute()}')
     except SerialException:
         error(f'Could not open serial connection to port={port}')
+        raise
 
 
 def main():

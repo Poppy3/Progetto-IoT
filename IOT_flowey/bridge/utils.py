@@ -31,6 +31,12 @@ def compose_filename(filename, suffix):
     assert isinstance(suffix, str) or suffix is None, 'suffix, when not None, must be a string'
 
     if suffix is not None:
-        suffix = suffix.replace('/', '.').replace('\\', '.')
-        return '{0}_{2}.{1}'.format(*filename.rsplit('.', 1), suffix)
+        suffix = purge_filename(suffix)
+        return '{0}-{2}.{1}'.format(*filename.rsplit('.', 1), suffix)
     return filename
+
+
+def purge_filename(filename):
+    assert isinstance(filename, str), 'filename must be a string'
+
+    return filename.replace('/', '.').replace('\\', '.')
