@@ -28,8 +28,10 @@ https://create.arduino.cc/projecthub/dymonxd/grow-it-yourself-giy-bec993?ref=tag
 #### Token Ngrok di Asia
 3ZHQNQ77QjY9tm273GSnB_5cZzYeXghN4HyG7R9w1r6
 
-#### Token Bot Flowey
+#### Token TelegramBot Flowey_frined_bot
 744755426:AAHCNYYTctEwvwW_PBzBK7NV8fh1pHkqaiQ
+#### Token TelegramBot Flowey_IoT_bot
+1744886816:AAF4Xz6dNJmfgooDUK0c_7E9zLo4pES-I1A
 
 #### Tesina
 https://docs.google.com/document/d/1NNB9fvqPyqg2SD_VwvQb1ESI88l5bCgdshtuKrfREr8/edit?usp=sharing
