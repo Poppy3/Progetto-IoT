@@ -1,0 +1,1 @@
+{"_index": 5, "bridge_id": "RASPBERRY001", "creation_date": "2021-03-29T21:49:39.377410", "dht_humidity": 14, "dht_temperature": 54, "gateway_id": "ARDUINO001", "humidity_1": 57, "humidity_2": 78, "humidity_3": 58, "luminosity_1": 8, "luminosity_2": 83, "plant_id": "442217262fbc447bbab8f677f4a50fd1", "plant_type_name": "geranio", "temperature": 31, "timestamp": 3505, "tries": 4}

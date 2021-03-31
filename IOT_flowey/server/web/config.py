@@ -11,3 +11,6 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.dirname(os.path.re
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 RESTFUL_PREFIX = '/api/v1'
+
+TELEFLASK_API_KEY = '1744886816:AAF4Xz6dNJmfgooDUK0c_7E9zLo4pES-I1A'
+TELEFLASK_HOSTNAME = 'localhost'
