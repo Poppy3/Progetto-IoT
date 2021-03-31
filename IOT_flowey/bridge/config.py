@@ -23,7 +23,7 @@ class SERVER_CONNECTOR:
 BRIDGE_ID = 'RASPBERRY001'
 CONNECTIONS_STORAGE_FILENAME = 'connections_storage.json'
 LOCK_TIMEOUT = 1
-UNSENT_DATA_BUFFER_INTERVAL_TIME = 11  # 1h worth of seconds (60m * 60s)  TODO setta a 3600
+UNSENT_DATA_BUFFER_INTERVAL_TIME = 3600  # 1h worth of seconds (60m * 60s)
 UNSENT_DATA_BUFFER_FILENAME = 'unsent_data.json'
-UNSENT_DATA_MAX_TRIES = 10
+UNSENT_DATA_MAX_TRIES = 50
 DEBUG_LEVEL = 1  # 0: no debug, 1: base debug, 2: verbose debug
