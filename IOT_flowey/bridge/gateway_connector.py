@@ -88,13 +88,12 @@ class GatewayConnector:
                             error(f'gateway _ser.readline() got OSError: {e}')
                         except Exception as e:
                             error(f'gateway readline() encountered unexpected {type(e)}: {e}')
-                        finally:
-                            break
+                        break
                     time.sleep(cfg.GATEWAY_CONNECTOR.READ_INTERVAL_TIME)
             except OSError as e:
                 error(f'gateway readline() got OSError: {e}')
             warning(f'Problems while reading serial data. '
-                    f'Reopening serial connection and retrying... (Try #{ith_try} of {max_tries})')
+                    f'Reopening serial connection and retrying... (Try #{ith_try + 1} of {max_tries})')
             self.reopen()
             time.sleep(cfg.GATEWAY_CONNECTOR.READ_INTERVAL_TIME)
         # exceeded max tries without reading
