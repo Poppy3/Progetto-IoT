@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python main.py & disown
+python main.py # & disown
