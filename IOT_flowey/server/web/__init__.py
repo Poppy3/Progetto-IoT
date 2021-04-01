@@ -4,7 +4,7 @@ from .views.plant_type import plant_type_bp
 from .extensions.json_encoder import DateTimeJSONEncoder
 from .extensions.restful import api
 from .extensions.sqlalchemy import db
-from .extensions.teleflask import bot
+# from .extensions.teleflask import bot
 from .models.plant_type import PlantTypeModel
 from .models.plant_data import PlantDataModel
 from .resources.plant_data import PlantDataAPI, PlantDataListAPI
@@ -24,7 +24,7 @@ def create_app(config_file='config.py'):
     db.init_app(app)
 
     # initialize telegram-flask extension
-    bot.init_app(app)
+    # bot.init_app(app)
 
     # register Api resource routing here
     api.add_resource(PlantDataAPI, '/plant_data/<int:plant_data_id>')
