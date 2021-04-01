@@ -6,24 +6,28 @@
 import config as cfg
 
 # standard libraries
-# -- NONE --
+import datetime
+
+
+def log(message, prefix):
+    print(f'[{datetime_iso()}] - {prefix} - {message}')
 
 
 def debug(message, level=1):
     if cfg.DEBUG_LEVEL and level <= cfg.DEBUG_LEVEL:
-        print(f'DEBUG - {message}')
+        log(message, f'DEBUG({level})')
 
 
 def error(message):
-    print(f'ERROR - {message}')
+    log(message, f'ERROR')
 
 
 def info(message):
-    print(f'INFO - {message}')
+    log(message, f'INFO')
 
 
 def warning(message):
-    print(f'WARNING - {message}')
+    log(message, f'WARNING')
 
 
 def compose_filename(filename, suffix):
@@ -40,3 +44,9 @@ def purge_filename(filename):
     assert isinstance(filename, str), 'filename must be a string'
 
     return filename.replace('/', '.').replace('\\', '.')
+
+
+def datetime_iso(datetime_=None):
+    if datetime_:
+        return datetime_.isoformat()
+    return datetime.datetime.now().isoformat()

@@ -6,7 +6,7 @@
 # local
 from gateway_connector import GatewayConnector
 from server_connector import ServerConnector
-from utils import compose_filename, purge_filename, debug, error, info, warning
+from utils import compose_filename, purge_filename, debug, error, info, warning, datetime_iso
 import config as cfg
 
 # standard libraries
@@ -19,6 +19,7 @@ import json
 import multiprocessing as mp
 import os
 import signal
+import sys
 import time
 
 
@@ -28,7 +29,9 @@ def initializer():
 
 
 def run_unsent_data_worker(port):
-    debug(f'run_unsent_data_worker() pid = {os.getpid()}')
+    pid = os.getpid()
+    sys.stdout = open(f'run_unsent_data_worker_{str(pid)}.log', "w")
+    debug(f'run_unsent_data_worker() pid = {pid}')
     buffer_dir_path = Path(__file__).with_name('_' + purge_filename(port))
     srv_cnx = ServerConnector(suffix=port)
 
@@ -75,7 +78,9 @@ def run_unsent_data_worker(port):
 
 
 def run_bridge_worker(connection):
-    debug(f'run_bridge_worker() pid = {os.getpid()}')
+    pid = os.getpid()
+    sys.stdout = open(f'run_bridge_worker_{str(pid)}.log', "w")
+    debug(f'run_bridge_worker() pid = {pid}')
     port = connection["p"]
     baudrate = connection["b"]
     uuid = connection["id"]
@@ -133,8 +138,11 @@ def run_bridge_worker(connection):
 
 
 def main():
+    pid = os.getpid()
+    date = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    sys.stdout = open(f'main_{str(pid)}-{date}.log', "w")
     debug(f'Running script with debug level = {cfg.DEBUG_LEVEL}')
-    debug(f'main() pid = {os.getpid()}')
+    debug(f'main() pid = {pid}')
     p = Path(__file__).with_name(cfg.CONNECTIONS_STORAGE_FILENAME)
     debug(f'main - Opening connections storage file {p.absolute()}')
     try:
