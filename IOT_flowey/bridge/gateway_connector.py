@@ -72,21 +72,24 @@ class GatewayConnector:
         max_tries = cfg.GATEWAY_CONNECTOR.READ_MAX_TRIES
         for ith_try in range(max_tries):  # max tentatives
             try:
-                while self._ser.in_waiting > 0:
-                    debug(f'Serial data incoming: {self._ser.in_waiting}')
-                    try:
-                        line = self._ser.readline()
-                        debug(f'Received serial data: {line}', 2)
-                        js = json.loads(line.decode())
-                        return js
-                    except ValueError as e:
-                        error(f'gateway readline() got ValueError: {e}')
-                    except SerialException as e:
-                        error(f'gateway readline() got SerialException: {e}')
-                    except OSError as e:
-                        error(f'gateway _ser.readline() got OSError: {e}')
-                    except Exception as e:
-                        error(f'gateway readline() encountered unexpected {type(e)}: {e}')
+                while True:
+                    if self._ser.in_waiting > 0:
+                        debug(f'Serial data incoming: {self._ser.in_waiting} bytes', 2)
+                        try:
+                            line = self._ser.readline()
+                            debug(f'Received serial data: {line}', 2)
+                            js = json.loads(line.decode())
+                            return js
+                        except ValueError as e:
+                            error(f'gateway readline() got ValueError: {e}')
+                        except SerialException as e:
+                            error(f'gateway readline() got SerialException: {e}')
+                        except OSError as e:
+                            error(f'gateway _ser.readline() got OSError: {e}')
+                        except Exception as e:
+                            error(f'gateway readline() encountered unexpected {type(e)}: {e}')
+                        finally:
+                            break
             except OSError as e:
                 error(f'gateway readline() got OSError: {e}')
             warning(f'Problems while reading serial data. '
