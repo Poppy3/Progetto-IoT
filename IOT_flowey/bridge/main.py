@@ -94,8 +94,8 @@ def run_bridge_worker(connection):
             data = gtw_cnx.readline()
             debug(f'run_bridge_worker - Serial data received: {data}', 2)
             if data is None:
-                warning('Serial data received was None. Reopening serial connection.')
-                gtw_cnx.reopen()
+                warning('Serial data received was None. Consider restarting serial connection.')
+                # gtw_cnx.reopen()
                 continue
 
             creation_date = datetime.datetime.now()
