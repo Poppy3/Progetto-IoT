@@ -90,6 +90,7 @@ class GatewayConnector:
                             error(f'gateway readline() encountered unexpected {type(e)}: {e}')
                         finally:
                             break
+                    time.sleep(cfg.GATEWAY_CONNECTOR.READ_INTERVAL_TIME)
             except OSError as e:
                 error(f'gateway readline() got OSError: {e}')
             warning(f'Problems while reading serial data. '
