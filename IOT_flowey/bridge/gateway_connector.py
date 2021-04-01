@@ -73,6 +73,7 @@ class GatewayConnector:
         for ith_try in range(max_tries):  # max tentatives
             try:
                 while self._ser.in_waiting > 0:
+                    debug(f'Serial data incoming: {self._ser.in_waiting}')
                     try:
                         line = self._ser.readline()
                         debug(f'Received serial data: {line}', 2)
