@@ -81,7 +81,7 @@ def list_case():
 
 
 def add_case():
-    new_connection = {"p": args.serial_port, "b": args.serial_baudrate, "t": args.type.lower(), "id": generate_uuid()}
+    new_connection = {"p": args.serial_port, "b": args.serial_baudrate, "t": args.type, "id": generate_uuid()}
     try:
         with p.open('r+') as f:
             try:
