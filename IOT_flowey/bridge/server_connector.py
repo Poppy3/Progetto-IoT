@@ -18,12 +18,14 @@ class ServerConnector:
                  host=cfg.SERVER_CONNECTOR.HOST,
                  port=cfg.SERVER_CONNECTOR.PORT,
                  local_mode=cfg.SERVER_CONNECTOR.LOCAL_MODE,
-                 suffix=None):
+                 suffix=None,
+                 log_path=None):
         self._protocol = protocol
         self._host = host
         self._port = port
         self._local_mode = local_mode
         self._suffix = suffix
+        self._log_path = log_path
 
     def set_host(self, host):
         self._host = host
@@ -36,7 +38,7 @@ class ServerConnector:
             return self._save_data_to_local_file(data)
         else:
             url = self._get_url(endpoint=cfg.SERVER_CONNECTOR.ENDPOINTS.PLANT_DATA)
-            return self._call_api(url, data, method='POST')
+            return self._call_api(url=url, data=data, method='POST')
 
     def _get_url(self, endpoint=None):
         url = self._protocol + self._host
@@ -46,7 +48,8 @@ class ServerConnector:
             url = url + endpoint
         return url
 
-    def _call_api(self, url, data, method='GET'):
+    @staticmethod
+    def _call_api(url, data, method='GET'):
         assert method is not None and isinstance(method, str), \
             "method must be provided with a value from ['GET', 'POST', 'PUT', 'DELETE']"
         method = method.upper()
@@ -70,4 +73,5 @@ class ServerConnector:
                 json.dump(data, f)
                 f.write('\n')
         except FileNotFoundError:
-            error('FILE NOT FOUND ERROR in _save_data_to_local_file()')
+            error(f'ServerConnector._save_data_to_local_file() - FileNotFoundError for {p.absolute()}',
+                  path=self._log_path)

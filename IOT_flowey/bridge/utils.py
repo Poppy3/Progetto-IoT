@@ -9,25 +9,30 @@ import config as cfg
 import datetime
 
 
-def log(message, prefix):
-    print(f'[{datetime_iso()}] - {prefix} - {message}')
+def log(message, prefix, path=None):
+    to_print = f'[{datetime_iso()}] - {prefix} - {message}'
+    print(to_print)
+    if path is not None:
+        with path.open('a', buffering=1) as f:
+            f.write(to_print)
+            f.write('\n')
 
 
-def debug(message, level=1):
-    if cfg.DEBUG_LEVEL and level <= cfg.DEBUG_LEVEL:
-        log(message, f'DEBUG({level})')
+def debug(message, level=1, path=None):
+    if cfg.LOGGING.DEBUG_LEVEL and level <= cfg.LOGGING.DEBUG_LEVEL:
+        log(message, f'DEBUG({level})', path)
 
 
-def error(message):
-    log(message, f'ERROR')
+def error(message, path=None):
+    log(message, f'ERROR', path)
 
 
-def info(message):
-    log(message, f'INFO')
+def info(message, path=None):
+    log(message, f'INFO', path)
 
 
-def warning(message):
-    log(message, f'WARNING')
+def warning(message, path=None):
+    log(message, f'WARNING', path)
 
 
 def compose_filename(filename, suffix):
