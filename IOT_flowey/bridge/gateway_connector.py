@@ -49,7 +49,7 @@ class GatewayConnector:
             "humidity_2": random.randint(1, 99),
             "humidity_3": random.randint(1, 99)
         }
-        time.sleep(cfg.GATEWAY_CONNECTOR.READ_INTERVAL_TIME)
+        time.sleep(cfg.GATEWAY_CONNECTOR.READ_INTERVAL_TIME * 5)
         return sample_data
 
     def readline(self):

@@ -6,7 +6,7 @@
 # local
 from gateway_connector import GatewayConnector
 from server_connector import ServerConnector
-from utils import compose_filename, purge_filename, debug, error, info, warning
+from utils import compose_filename, purge_filename, debug, error, info, warning, GracefulInterruptHandler
 import config as cfg
 
 # standard libraries
@@ -20,6 +20,15 @@ import multiprocessing as mp
 import os
 import signal
 import time
+
+
+def cleanup(exit_val=0):
+    debug(f'Cleaning up and exiting program with [{exit_val}]')
+    pid_path = Path(__file__).with_name(cfg.PID_FILENAME)
+    if pid_path.is_file():
+        debug(f'Deleting pid file {pid_path.absolute()}')
+        pid_path.unlink()
+    exit(exit_val)
 
 
 def initializer():
@@ -146,57 +155,60 @@ def run_bridge_worker(connection):
 
 
 def main():
+    pid_path = Path(__file__).with_name(cfg.PID_FILENAME)
+    if pid_path.is_file():
+        warning(f'Program is already running in another instance. Check {pid_path.absolute()} to know main pid.')
+        exit(0)
+
     log_path = Path(__file__).with_name(cfg.LOGGING.MAIN_FILENAME)
     info('- - - - - - - - - - - - - - - - - - - -', path=log_path)
     info(f'main() - Running script with debug level = {cfg.LOGGING.DEBUG_LEVEL}', path=log_path)
     info(f'main() - pid = {os.getpid()}', path=log_path)
+    with pid_path.open('w', buffering=1) as pid_f:
+        info(f'main() - Storing process pid in {pid_path.absolute()}', path=log_path)
+        pid_f.write(str(os.getpid()))
+
     conn_path = Path(__file__).with_name(cfg.CONNECTIONS_STORAGE_FILENAME)
-    info(f'main() - Opening connections storage file {conn_path.absolute()}', path=log_path)
+    debug(f'main() - Opening connections storage file {conn_path.absolute()}', path=log_path)
     try:
         with conn_path.open('r') as f:
             try:
                 connections = json.load(f)
                 if type(connections) is not list:
-                    error(f'main() - Error in contents of file {cfg.CONNECTIONS_STORAGE_FILENAME}.\n'
-                          f'Was expecting list type, but found {type(connections)}', path=log_path)
-                    exit(-1)
+                    raise ValueError
                 n = len(connections)
                 if n == 0:
-                    error(f'main() - No connections registered in {conn_path.absolute()}\n'
-                          f'Try running "setup.py -h" script first', path=log_path)
-                    exit(-1)
-                info(f'main() - Initializing {n} workers', path=log_path)
+                    raise ValueError
+            except ValueError:
+                error(f'main() - No connections registered in {conn_path.absolute()}\n'
+                      f'Try running "setup.py -h" first', path=log_path)
+                cleanup(-1)
+            else:
+                info(f'main() - Initializing {n} bridge workers', path=log_path)
                 bridge_pool = mp.Pool(processes=n, initializer=initializer)
+                info(f'main() - Initializing {n} unsent_data workers', path=log_path)
                 unsent_pool = mp.Pool(processes=n, initializer=initializer)
-                try:
+                with GracefulInterruptHandler() as int_hdl:
                     bridge_pool.map_async(run_bridge_worker, connections)
                     unsent_pool.map_async(run_unsent_data_worker, [connection["p"] for connection in connections])
                     while True:
                         # running forever. waiting for interrupt command.
-                        time.sleep(999_999)
-                except KeyboardInterrupt:
-                    debug('main() - Received KeyboardInterrupt', path=log_path)
-                    info('main() - Terminating spawned "run_bridge_worker()" and "run_unsent_data_worker()" workers',
-                         path=log_path)
-                    bridge_pool.terminate()
-                    bridge_pool.close()
-                    unsent_pool.terminate()
-                    unsent_pool.close()
-                    exit(0)
-                error('main() - Reached unexpected code. Terminating pooled processes.', path=log_path)
+                        time.sleep(1)
+                        if int_hdl.interrupted:
+                            debug('main() - Received interrupt signal', path=log_path)
+                            break
+
+                info('main() - Terminating spawned bridge and unsent_data workers', path=log_path)
                 bridge_pool.terminate()
                 bridge_pool.close()
                 unsent_pool.terminate()
                 unsent_pool.close()
-                exit(-1)
-            except ValueError:
-                error(f'main() - No connections registered in {conn_path.absolute()}\n'
-                      f'Try running "setup.py -h" first', path=log_path)
-                exit(-1)
+                cleanup(0)
+
     except FileNotFoundError:
         error(f'main() - File not found {conn_path.absolute()}\n'
               f'Try running "setup.py -h" first', path=log_path)
-        exit(-1)
+        cleanup(-1)
 
 
 if __name__ == '__main__':

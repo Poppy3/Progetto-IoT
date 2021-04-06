@@ -33,6 +33,7 @@ class TELEGRAM_BOT:
 
 BRIDGE_ID = 'RASPBERRY001'
 CONNECTIONS_STORAGE_FILENAME = 'connections_storage.json'
+PID_FILENAME = 'bridge.pid'
 UNSENT_DATA_BUFFER_INTERVAL_TIME = 3600  # 1h worth of seconds (60m * 60s)
 UNSENT_DATA_BUFFER_FILENAME = 'unsent_data.json'
 UNSENT_DATA_MAX_TRIES = 50

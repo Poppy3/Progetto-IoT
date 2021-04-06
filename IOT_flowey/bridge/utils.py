@@ -7,6 +7,7 @@ import config as cfg
 
 # standard libraries
 import datetime
+import signal
 
 
 def log(message, prefix, path=None):
@@ -55,3 +56,39 @@ def datetime_iso(datetime_=None):
     if datetime_:
         return datetime_.isoformat()
     return datetime.datetime.now().isoformat()
+
+
+# taken from https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python
+class GracefulInterruptHandler:
+    def __init__(self, signals=(signal.SIGINT, signal.SIGTERM)):
+        self.signals = signals
+        self.original_handlers = {}
+        self.interrupted = False
+        self.released = False
+
+    def __enter__(self):
+        self.interrupted = False
+        self.released = False
+
+        for sig in self.signals:
+            self.original_handlers[sig] = signal.getsignal(sig)
+            signal.signal(sig, self.handler)
+
+        return self
+
+    def handler(self, signum, frame):
+        self.release()
+        self.interrupted = True
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.release()
+
+    def release(self):
+        if self.released:
+            return False
+
+        for sig in self.signals:
+            signal.signal(sig, self.original_handlers[sig])
+
+        self.released = True
+        return True
