@@ -1,6 +1,7 @@
 from flask import Flask
 from .views.test_view import main
 from .views.plant_type import plant_type_bp
+from .views.graphs import graphs_bp
 from .extensions.json_encoder import DateTimeJSONEncoder
 from .extensions.restful import api
 from .extensions.sqlalchemy import db
@@ -42,6 +43,7 @@ def create_app(config_file='config.py'):
     # register blueprints
     app.register_blueprint(main)
     app.register_blueprint(plant_type_bp)
+    app.register_blueprint(graphs_bp)
     # todo restanti
 
     #

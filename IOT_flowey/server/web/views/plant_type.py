@@ -48,7 +48,7 @@ def list_all():
 def details(plant_type_id):
     plant_type = PlantTypeModel.query.get_or_404(plant_type_id)
     return render_template('plant_type/details.html',
-                           title='Plant-Type Details',
+                           title=plant_type_id,
                            plant_type_model=plant_type)
 
 

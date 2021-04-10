@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{# puts the .active class into base.html navbar link #}
+{% block active_navlink__home %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3 align-items-center">
+    <div class="col">
+        <h1>Plants</h1>
+    </div>
+</div>
+
+<div class="table-responsive collapsable">
+    <table class="table">
+        <caption>List of registered plants</caption>
+        <thead class="thead-light thead-double">
+        <tr>
+            <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for item in plants %}
+                <tr class="bg-light">
+                    <td><a href={{ url_for('graphs.details', plant_id=item.plant_id) }}>{{ item.plant_id }}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<div class="row mb-3 align-items-center">
+    <div class="col">
+        <h1>Measurements</h1>
+    </div>
+</div>
+
+<div class="table-responsive collapsable">
+    <table class="table">
+        <caption>List of measurements sampled</caption>
+        <thead class="thead-light thead-double">
+        <tr>
+            <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr class="bg-light">
+                <td><a href=http://127.0.0.1:8080/graphs/humidity">Humidity</a></td>
+            </tr>
+            <tr class="bg-light">
+                <td><a href=http://127.0.0.1:8080/graphs/temperature">Temperature</a></td>
+            </tr>
+            <tr class="bg-light">
+                <td><a href=http://127.0.0.1:8080/graphs/luminosity">Luminosity</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+
+
