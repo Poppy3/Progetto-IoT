@@ -5,6 +5,7 @@
     <title>Chart.js Example</title>
     <!-- import plugin script -->
     <script src="{{ url_for('static', filename='js/chart.bundle.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.js"></script>
   </head>
   <body>
     <h1>Simple Line Chart</h1>
@@ -24,7 +25,7 @@
                   {% endfor %}],
         datasets : [{
             label: '{{ legend }}',
-            fill: true,
+            fill: false,
             lineTension: 0.1,
             backgroundColor: "rgba(75,192,192,0.4)",
             borderColor: "rgba(75,192,192,1)",
@@ -55,6 +56,20 @@
       var myChart = new Chart(ctx, {
         type: 'line',
         data: chartData,
+          options: {
+            annotation: {
+            annotations: [{
+                drawTime: "beforeDatasetsDraw",
+                type: "box",
+                xScaleID: "x-axis-0",
+                yScaleID: "y-axis-0",
+                borderWidth: 0,
+                yMin: 25,
+                yMax: 40,
+                backgroundColor: "rgba(46, 204, 113,0.3)"
+      }]
+    }
+  }
       });
     </script>
 
