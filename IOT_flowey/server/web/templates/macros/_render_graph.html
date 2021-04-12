@@ -1,17 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Chart.js Example</title>
-    <!-- import plugin script -->
-    <script src="{{ url_for('static', filename='js/chart.bundle.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.js"></script>
-  </head>
-  <body>
-    <h1>Simple Line Chart</h1>
-    <!-- bar chart canvas element -->
-    <canvas id="myChart" width="600" height="400"></canvas>
-    <p id="caption">The chart is displaying a simple line chart.</p>
+{% macro render_graph(attribute, labels, values, plant_type, caption) %}
+
+<canvas id="myChart_{{ attribute }}" width="600" height="400"></canvas>
+    <p id="caption">{{ caption }}</p>
 
     <script>
       // Global parameters:
@@ -24,7 +14,7 @@
                    "{{item}}",
                   {% endfor %}],
         datasets : [{
-            label: '{{ legend }}',
+            label: '{{attribute}}',
             fill: false,
             lineTension: 0.1,
             backgroundColor: "rgba(75,192,192,0.4)",
@@ -50,7 +40,7 @@
       }
 
       // get chart canvas
-      var ctx = document.getElementById("myChart").getContext("2d");
+      var ctx = document.getElementById("myChart_{{ attribute }}").getContext("2d");
 
       // create the chart using the chart canvas
       var myChart = new Chart(ctx, {
@@ -64,8 +54,8 @@
                 xScaleID: "x-axis-0",
                 yScaleID: "y-axis-0",
                 borderWidth: 0,
-                yMin: 1233.4,
-                yMax: 1234.2,
+                yMin: {{plant_type.humidity_min}},
+                yMax: {{plant_type.humidity_max}},
                 backgroundColor: "rgba(46, 204, 113,0.3)"
                 }]
             },
@@ -79,5 +69,4 @@
       });
     </script>
 
-  </body>
-</html>
+{% endmacro %}
