@@ -1,4 +1,7 @@
+{% from "macros/_render_graph.html" import render_graph %}
+
 {% extends "base.html" %}
+
 
 {# puts the .active class into base.html navbar link #}
 {% block active_navlink__home %}
@@ -6,79 +9,33 @@ active
 {% endblock %}
 
 {% block content %}
-  <body>
     <h1>{{ title }}</h1>
-    <!-- bar chart canvas element -->
-    <canvas id="myChart" width="600" height="400"></canvas>
-    <p id="caption">The chart is displaying the measurements obtained from the plant.</p>
 
-    <script>
-      // Global parameters:
-      // do not resize the chart canvas when its container does (keep at 600x400px)
-      Chart.defaults.global.responsive = false;
+    <div class="table-responsive collapsable">
+    <table class="table">
+        <thead class="thead-light thead-double">
+        <tr>
+            <th scope="col">Plant type: {{ plant_type.name }}</th>
+            <th scope="col" colspan="3">Humidity</th>
+            <th scope="col" colspan="3">Luminosity</th>
+            <th scope="col" colspan="3">Temperature</th>
+        </tr>
+        <tr>
+            <th scope="col" colspan="2"></th>
+            {% for i in range(3) %}
+                <th scope="col" class="small">Min</th>
+                <th scope="col" class="small">Max</th>
+                <th scope="col" class="small">Tolerance</th>
+            {% endfor %}
+        </tr>
+        </thead>
 
-      // define the chart data
-      var chartData = {
-        labels : [{% for item in labels %}
-                   "{{item}}",
-                  {% endfor %}],
-        datasets : [{
-            label: 'Humidity',
-            fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data : [{% for item in values %}
-                      {{item}},
-                    {% endfor %}],
-            spanGaps: false
-        }]
-      }
 
-      // get chart canvas
-      var ctx = document.getElementById("myChart").getContext("2d");
 
-      // create the chart using the chart canvas
-      var myChart = new Chart(ctx, {
-        type: 'line',
-        data: chartData,
-          options: {
-            annotation: {
-            annotations: [{
-                drawTime: "beforeDatasetsDraw",
-                type: "box",
-                xScaleID: "x-axis-0",
-                yScaleID: "y-axis-0",
-                borderWidth: 0,
-                yMin: {{plant_type.humidity_min}},
-                yMax: {{plant_type.humidity_max}},
-                backgroundColor: "rgba(46, 204, 113,0.3)"
-                }]
-            },
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    }],
-
-            }
-  }
-      });
-    </script>
-
-  </body>
-</html>
+    <p>Plant type: {{ plant_type.name }} </p>
+    <p>Gateway_id: {{ plant_type.name }} </p>
+    {{ render_graph('humidity', labels, values, plant_type, 'caption') }}
+    <hr>
+    {{ render_graph('temperature', labels, values, plant_type, 'caption2') }}
 
 {% endblock %}

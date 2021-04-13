@@ -38,7 +38,7 @@ def details(plant_id):
     plant_type.humidity_max = 1240
     print (plant_type)
 
-    return render_template('graphs/test2.html',
+    return render_template('graphs/details.html',
                            values=values,
                            labels=labels,
                            title=title,
@@ -47,23 +47,17 @@ def details(plant_id):
 
 @graphs_bp.route('/test')
 def test():
-    legend = 'Monthly Data'
-
     labels = []
-    values = []
-    plant_measurements = PlantDataModel.query.filter_by(plant_id='fffa776abc9f47568e943904ce792d4b').all()
+    title = 'Measurements of plant id:'# + plant_id
+    plant_measurements = PlantDataModel.query.filter_by(plant_id='442217262fbc447bbab8f677f4a50fd1').all()
     for item in plant_measurements:
-        #labels.append(item. creation_date.strftime("%d/%m - %H:%M"))
         labels.append(item.creation_date)
-        values.append(item.humidity_1)
-    #labels.append(datetime.datetime(2020, 8, 13, 23, 40, 11, 99399))
-    #values.append(1234.1)
-    labels.append(datetime.datetime(2021, 3, 13, 23, 50, 20, 99399))
-    values.append(1234.1)
-    labels.append(datetime.datetime(2021, 3, 13, 23, 50, 40, 99399))
-    values.append(1234.0)
-    return render_template('graphs/test.html',
-                           values=values,
+        type_id=item.plant_type_id
+    plant_type = PlantTypeModel.query.filter_by(id=type_id).first()
+
+    return render_template('graphs/test2.html',
+                           data=plant_measurements,
                            labels=labels,
-                           legend=legend)
+                           plant_type=plant_type,
+                           title=title)
 
