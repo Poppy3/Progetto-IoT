@@ -9,33 +9,362 @@ active
 {% endblock %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
+    <div class="row mb-3 align-items-center">
+    <div class="col">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-primary my-2" role="button"
+           href="{{ url_for('plant_type.details', plant_type_id=plant_type.id) }}">
+            <span class="d-none d-md-inline">Plant type details </span>
+        </a>
+    </div>
+</div>
+    <hr/>
+<div class="row">
+    <div class="col">
+        Plant type: {{ plant_type.name }}
+    </div>
+    <div class="col">
+        Gateway id: {{ plant_info.gateway_id }}
+    </div>
+    <div class="col">
+        Bridge id: {{ plant_info.bridge_id }}
+    </div>
+</div>
 
-    <div class="table-responsive collapsable">
-    <table class="table">
-        <thead class="thead-light thead-double">
-        <tr>
-            <th scope="col">Plant type: {{ plant_type.name }}</th>
-            <th scope="col" colspan="3">Humidity</th>
-            <th scope="col" colspan="3">Luminosity</th>
-            <th scope="col" colspan="3">Temperature</th>
-        </tr>
-        <tr>
-            <th scope="col" colspan="2"></th>
-            {% for i in range(3) %}
-                <th scope="col" class="small">Min</th>
-                <th scope="col" class="small">Max</th>
-                <th scope="col" class="small">Tolerance</th>
-            {% endfor %}
-        </tr>
-        </thead>
+<hr/>
+
+<canvas id="myChart_humidity" width="600" height="400"></canvas>
+<p id="caption">All humidity measures of plant {{ plant_info.plant_id }}</p>
+    <hr/>
+<canvas id="myChart_temperature" width="600" height="400"></canvas>
+<p id="caption">All temperature measures of plant {{ plant_info.plant_id }}</p>
+    <hr/>
+<canvas id="myChart_luminosity" width="600" height="400"></canvas>
+<p id="caption">All luminosity measures of plant {{ plant_info.plant_id }}</p>
+    <hr/>
 
 
+<script>
+// Global parameters:
+// do not resize the chart canvas when its container does (keep at 600x400px)
+Chart.defaults.global.responsive = false;
 
-    <p>Plant type: {{ plant_type.name }} </p>
-    <p>Gateway_id: {{ plant_type.name }} </p>
-    {{ render_graph('humidity', labels, values, plant_type, 'caption') }}
-    <hr>
-    {{ render_graph('temperature', labels, values, plant_type, 'caption2') }}
+// -----DEFINE CHART_HUMIDITY HERE------
+      var chartData_humidity = {
+        labels : [{% for item in labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [{
+            label: 'humidity_1',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "#003f5c", // blu
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values[2] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false
+        },
+        {
+            label: 'humidity_2',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "#50bc66",//verde
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values[3] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false
+        },
+        {
+            label: 'humidity_3',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "#bc5090", //viola
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values[4] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false
+        },
+        {
+            label: 'dht_humidity',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "#ffa600",//giallo
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values[0] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false
+        }
+        ]
+      }
+
+// get chart canvas
+      var ctx = document.getElementById("myChart_humidity").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData_humidity,
+          options: {
+            {% if plant_type.humidity_min and plant_type.humidity_max %}
+            annotation: {
+            annotations: [{
+                drawTime: "beforeDatasetsDraw",
+                type: "box",
+                xScaleID: "x-axis-0",
+                yScaleID: "y-axis-0",
+                borderWidth: 0,
+                yMin: {{plant_type.humidity_min or "null"}},
+                yMax: {{plant_type.humidity_max or "null"}},
+                backgroundColor: "rgba(46, 204, 113,0.3)"
+                }]
+            },
+            {% endif %}
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    }],
+
+            }
+          }
+      });
+// -----CHART_HUMIDITY END------
+
+// -----DEFINE CHART_TEMPERATURE HERE-----------------------------------
+      var chartData_temperature = {
+        labels : [{% for item in labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [{
+            label: 'dht_temperature',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "#003f5c", // blu
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values[1] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false
+        },
+        {
+            label: 'temperature',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "#50bc66",//verde
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values[7] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false
+        },
+
+        ]
+      }
+
+// get chart canvas
+      var ctx = document.getElementById("myChart_temperature").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData_temperature,
+          options: {
+            {% if plant_type.temperature_min and plant_type.temperature_max %}
+            annotation: {
+            annotations: [{
+                drawTime: "beforeDatasetsDraw",
+                type: "box",
+                xScaleID: "x-axis-0",
+                yScaleID: "y-axis-0",
+                borderWidth: 0,
+                yMin: {{plant_type.temperature_min or "null"}},
+                yMax: {{plant_type.temperature_max or "null"}},
+                backgroundColor: "rgba(46, 204, 113,0.3)"
+                }]
+            },
+            {% endif %}
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    }],
+
+            }
+          }
+      });
+  // -----CHART_TEMPERATURE END------
+
+
+// -----DEFINE CHART_LUMINOSITY HERE------
+      var chartData_luminosity = {
+        labels : [{% for item in labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [{
+            label: 'luminosity_1',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "#bc5090", //viola
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values[5] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false
+        },
+        {
+            label: 'luminosity_2',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "#ffa600",//giallo
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in values[6] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false
+        }
+        ]
+      }
+
+// get chart canvas
+      var ctx = document.getElementById("myChart_luminosity").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData_luminosity,
+          options: {
+            {% if plant_type.luminosity_min and plant_type.luminosity_max %}
+            annotation: {
+            annotations: [{
+                drawTime: "beforeDatasetsDraw",
+                type: "box",
+                xScaleID: "x-axis-0",
+                yScaleID: "y-axis-0",
+                borderWidth: 0,
+                yMin: {{plant_type.luminosity_min or "null"}},
+                yMax: {{plant_type.luminosity_max or "null"}},
+                backgroundColor: "rgba(46, 204, 113,0.3)"
+                }]
+            },
+            {% endif %}
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    }],
+
+            }
+          }
+      });
+// -----CHART_LUMIKNOSITY END------
+
+</script>
 
 {% endblock %}
