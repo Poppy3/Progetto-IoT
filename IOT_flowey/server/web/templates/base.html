@@ -43,6 +43,8 @@
                    href="{{ url_for('main.index') }}">Home</a>
                 <a class="nav-link {% block active_navlink__plant_type %}{% endblock %}"
                    href="{{ url_for('plant_type.list_all') }}">Plant Types</a>
+                <a class="nav-link {% block active_navlink__graphs %}{% endblock %}"
+                   href="{{ url_for('graphs.list_all') }}">Graphs</a>
                 <a class="nav-link {% block active_navlink__todo %}{% endblock %}"
                    href="#">TODO</a>
             </div>

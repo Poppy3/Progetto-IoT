@@ -1,13 +1,9 @@
-from ..forms.plant_type import PlantTypeForm
 from ..models.plant_type import PlantTypeModel, db
 from ..models.plant_data import PlantDataModel, db
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template
 from sqlalchemy.exc import OperationalError
-import datetime
-
 
 graphs_bp = Blueprint('graphs', __name__, url_prefix='/graphs')
-
 
 @graphs_bp.route('/')
 def list_all():
@@ -59,34 +55,4 @@ def details(plant_id):
                            title=title,
                            plant_type=plant_type,
                            plant_info = plant_info)
-
-
-@graphs_bp.route('/test')
-def test():
-    labels = []
-    data = []
-    for i in range(8):
-        data.append([])
-    title = 'Measurements of plant id:'# + plant_id
-    plant_measurements = PlantDataModel.query.filter_by(plant_id='442217262fbc447bbab8f677f4a50fd1').all()
-    for item in plant_measurements:
-        labels.append(item.creation_date)
-        data[0].append(item.dht_humidity)
-        data[1].append(item.dht_temperature)
-        data[2].append(item.humidity_1)
-        data[3].append(item.humidity_2)
-        data[4].append(item.humidity_3)
-        data[5].append(item.luminosity_1)
-        data[6].append(item.luminosity_2)
-        data[7].append(item.temperature)
-    type_id = plant_measurements[0].plant_type_id
-    plant_type = PlantTypeModel.query.filter_by(id=type_id).first()
-    plant_info = PlantDataModel.query.filter_by(plant_id='442217262fbc447bbab8f677f4a50fd1').first()
-
-    return render_template('graphs/test2.html',
-                           values=data,
-                           labels=labels,
-                           plant_type=plant_type,
-                           title=title,
-                           plant_info=plant_info)
 
