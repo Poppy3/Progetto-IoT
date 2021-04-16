@@ -1,10 +1,10 @@
 from flask import Flask
-from .views.test_view import main
+from .views.homepage import homepage_bp
 from .views.plant_type import plant_type_bp
+from .views.telegram_bot import telegram_bot_bp
 from .extensions.json_encoder import DateTimeJSONEncoder
 from .extensions.restful import api
 from .extensions.sqlalchemy import db
-# from .extensions.teleflask import bot
 from .models.plant_type import PlantTypeModel
 from .models.plant_data import PlantDataModel
 from .resources.plant_data import PlantDataAPI, PlantDataListAPI
@@ -40,8 +40,9 @@ def create_app(config_file='config.py'):
         db.create_all()
 
     # register blueprints
-    app.register_blueprint(main)
+    app.register_blueprint(homepage_bp)
     app.register_blueprint(plant_type_bp)
+    app.register_blueprint(telegram_bot_bp)
     # todo restanti
 
     #

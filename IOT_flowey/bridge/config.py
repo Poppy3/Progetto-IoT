@@ -28,12 +28,17 @@ class SERVER_CONNECTOR:
 
 
 class TELEGRAM_BOT:
+    ADMIN_CHAT_ID = '353051365'
     API_KEY ='1744886816:AAF4Xz6dNJmfgooDUK0c_7E9zLo4pES-I1A'
+
+
+class UNSENT_DATA:
+    ALERT_THRESHOLD = 42  # number of tries after which an alert message will be sent
+    BUFFER_FILENAME = 'unsent_data.json'
+    INTERVAL_TIME = 3600  # 1h worth of seconds (60m * 60s)
+    MAX_TRIES = 50
 
 
 BRIDGE_ID = 'RASPBERRY001'
 CONNECTIONS_STORAGE_FILENAME = 'connections_storage.json'
 PID_FILENAME = 'bridge.pid'
-UNSENT_DATA_BUFFER_INTERVAL_TIME = 3600  # 1h worth of seconds (60m * 60s)
-UNSENT_DATA_BUFFER_FILENAME = 'unsent_data.json'
-UNSENT_DATA_MAX_TRIES = 50

@@ -24,9 +24,11 @@ class PlantTypeForm(FlaskForm):
                                              description='Maximum time (in seconds) allowed for the plant '
                                                          'should it endure adverse luminosity levels',
                                              validators=[NumberRange(min=0, max=2000000000), Optional()])
-    temperature_min = DecimalField('Temperature Min', description='Minimum temperature (°C) that the plant should endure',
+    temperature_min = DecimalField('Temperature Min',
+                                   description='Minimum temperature (°C) that the plant should endure',
                                    validators=[NumberRange(min=-100, max=100), Optional()])
-    temperature_max = DecimalField('TemperatureMax', description='Maximum temperature (°C) that the plant should endure',
+    temperature_max = DecimalField('TemperatureMax',
+                                   description='Maximum temperature (°C) that the plant should endure',
                                    validators=[NumberRange(min=-100, max=100), Optional()])
     temperature_tolerance_time = IntegerField('Tolerance Time',
                                               description='Maximum time (in seconds) allowed for the plant '

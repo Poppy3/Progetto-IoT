@@ -8,7 +8,8 @@ class PlantDataModel(db.Model):
     __tablename__ = 'plant_data'
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    last_modified: datetime.datetime = db.Column(db.DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    last_modified: datetime.datetime = db.Column(db.DateTime, default=datetime.datetime.utcnow,
+                                                 onupdate=datetime.datetime.utcnow)
 
     plant_id: str = db.Column(db.String(length=50), nullable=False)
     bridge_id: str = db.Column(db.String(length=50), nullable=False)
