@@ -1,0 +1,358 @@
+from ..config import TELEGRAM_API_KEY, TELEGRAM_BASE_URL
+from ..models.plant_data import PlantDataModel
+from ..models.plant_type import PlantTypeModel
+from argparse import Namespace as Ns
+from flask_sqlalchemy import Model
+from itertools import chain
+from sqlalchemy.schema import Column
+from telegram import Bot, ForceReply, Update, ReplyKeyboardMarkup, ReplyKeyboardRemove, Message
+from telegram.utils.helpers import escape_markdown
+from telegram.ext import (
+    CallbackContext,
+    CommandHandler,
+    ConversationHandler,
+    Dispatcher,
+    Filters,
+    Handler,
+    MessageFilter,
+    MessageHandler,
+)
+from typing import Tuple
+import datetime
+import numpy as np
+import pandas as pd
+import re
+
+
+class FilterModel(MessageFilter):
+    data_filter = True
+
+    def __init__(self, model: Model, column: Column, regex: str = None, regex_group_as_filter: str = 'filter'):
+        self.model: Model = model
+        self.column: Column = column
+        self.regex: str = regex
+        self.regex_group_as_filter = regex_group_as_filter
+        self.name = f'FilterModel({self.model}, {self.column}, {self.regex}, {self.regex_group_as_filter})'
+
+    def filter(self, message: Message):
+        if message.text:
+            if self.regex is None:
+                col_filter = message.text
+            else:
+                try:
+                    col_filter = re.search(self.regex, message.text).group(self.regex_group_as_filter)
+                except (TypeError, AttributeError):
+                    return False
+
+            match = self.model.query.filter(self.column == col_filter).first()
+            if match is not None:
+                return True
+        return False
+
+
+# noinspection PyTypeChecker
+class TelegramBot:
+    conversations = Ns(
+        plant_status=Ns(
+            bridge_selected=0,
+            plant_selected=1,
+            META=Ns(
+                regex=r'^(?P<name>\w+)\s*\((?P<gateway>\w+)\)$'
+            )
+        )
+    )
+
+    def __init__(self,
+                 token=TELEGRAM_API_KEY,
+                 base_url=TELEGRAM_BASE_URL):
+        self._bot = Bot(token=token, base_url=base_url)
+        self._dispatcher = Dispatcher(self._bot, None, workers=0)
+
+        # register update handlers
+        self._dispatcher.add_handler(CommandHandler('start', self._command_start))
+        self._dispatcher.add_handler(CommandHandler('help', self._command_help))
+        # self._dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, self._echo))
+
+        self._dispatcher.add_handler(ConversationHandler(
+            entry_points=[CommandHandler('plant_status', self._conv_plant_status_start)],
+            states={
+                self.conversations.plant_status.bridge_selected: [
+                    MessageHandler(FilterModel(PlantDataModel, PlantDataModel.bridge_id),
+                                   self._conv_plant_status_bridge_selected),
+                    MessageHandler(Filters.text &
+                                   ~Filters.command &
+                                   ~FilterModel(PlantDataModel, PlantDataModel.bridge_id),
+                                   self._conv_plant_status_bridge_selected_error),
+                ],
+                self.conversations.plant_status.plant_selected: [
+                    MessageHandler(FilterModel(PlantDataModel,
+                                               PlantDataModel.gateway_id,
+                                               self.conversations.plant_status.META.regex,
+                                               'gateway'),
+                                   self._conv_plant_status_plant_selected),
+                    MessageHandler(Filters.text &
+                                   ~Filters.command &
+                                   ~FilterModel(PlantDataModel,
+                                                PlantDataModel.gateway_id,
+                                                self.conversations.plant_status.META.regex,
+                                                'gateway'),
+                                   self._conv_plant_status_plant_selected_error),
+                ],
+            },
+            fallbacks=[CommandHandler('cancel', self._conv_plant_status_fallback)],
+        ))
+
+    @property
+    def bot(self):
+        return self._bot
+
+    @property
+    def dispatcher(self):
+        return self._dispatcher
+
+    def add_handler(self, handler: Handler):
+        self._dispatcher.add_handler(handler)
+
+    def set_webhook(self, webhook_url):
+        success = self._bot.set_webhook(url=webhook_url)
+        return success
+
+    @staticmethod
+    def _command_start(update: Update, _: CallbackContext) -> None:
+        """Send a message when the command /start is issued."""
+        user = update.effective_user
+        update.message.reply_markdown_v2(
+            f'Hi {user.mention_markdown_v2()}\!\n'
+            f'My name is Flowey Bot\. Use /help to know what i can do for you\.',
+            reply_markup=ForceReply(selective=True),
+        )
+
+    @staticmethod
+    def _command_help(update: Update, _: CallbackContext) -> None:
+        """Send a message when the command /help is issued."""
+        update.message.reply_text(
+            'Here\'s a list of commands I can understand:\n'
+            ' · /start - Displays a welcome message\n'
+            ' · /help - Displays this message\n'
+            ' · /plant_status - I\'ll help you know the status of your plants!\n'
+            ' · ... more soon! ...'
+        )
+
+    @staticmethod
+    def _echo(update: Update, _: CallbackContext) -> None:
+        """Echo the user message."""
+        update.message.reply_text(update.message.text)
+
+    # Conversation started with '/status' command
+    def _conv_plant_status_start(self, update: Update, _: CallbackContext) -> int:
+        """Send a message when the command /status is issued.
+        Start step of a multi-step conversation"""
+        query_results = (PlantDataModel.query
+                         .with_entities(PlantDataModel.bridge_id)
+                         .distinct()
+                         .order_by(PlantDataModel.bridge_id)
+                         .all())
+        reply_keyboard = get_keyboard_layout(list(chain(*query_results)))
+
+        update.message.reply_markdown_v2('Please select the group of plants you want to check the status of\.\n\n'
+                                         'Reply /cancel in any moment to end this conversation\.',
+                                         reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
+        return self.conversations.plant_status.bridge_selected
+
+    # continuation of Conversation started with '/status' command
+    def _conv_plant_status_bridge_selected(self, update: Update, ctx: CallbackContext) -> int:
+        bridge_selected = update.message.text
+        ctx.user_data['bridge_selected'] = bridge_selected
+        query_results = (PlantDataModel.query
+                         .join(PlantTypeModel)
+                         .with_entities(PlantDataModel.gateway_id, PlantTypeModel.name)
+                         .filter(PlantDataModel.bridge_id == bridge_selected)
+                         .order_by(PlantTypeModel.name)
+                         .distinct()
+                         .all())
+        keys = [f'{name} ({gtw_id})' for (gtw_id, name) in query_results]
+        reply_keyboard = get_keyboard_layout(keys)
+
+        # TODO prendi le piante dal model, e stampa un report sommario
+        update.message.reply_markdown_v2(
+            f'You selected the group "{escape_markdown(bridge_selected, version=2)}"\.\n\n'
+            f'<Qui mostro il report sommario delle piante del bridge selezionato\>\n\n'
+            f'Please select the plant you want to check the status of, '
+            f'or reply with /cancel to end the conversation\.',
+            reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        )
+        return self.conversations.plant_status.plant_selected
+
+    # error case of _conv_plant_status_bridge_selected step of Conversation started with '/status' command
+    def _conv_plant_status_bridge_selected_error(self, update: Update, _: CallbackContext) -> int:
+        bridge_selected = update.message.text
+        query_results = (PlantDataModel.query
+                         .with_entities(PlantDataModel.bridge_id)
+                         .distinct()
+                         .order_by(PlantDataModel.bridge_id)
+                         .all())
+        reply_keyboard = get_keyboard_layout(list(chain(*query_results)))
+
+        update.message.reply_markdown_v2(
+            f'Sorry, I don\'t recognize any group named "{escape_markdown(bridge_selected, version=2)}"\.\n'
+            f'Please select again the group of plants you want to check the status of\.\n\n'
+            f'Reply /cancel in any moment to end this conversation\.',
+            reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        )
+        return self.conversations.plant_status.bridge_selected
+
+    # continuation of Conversation started with '/status' command
+    def _conv_plant_status_plant_selected(self, update: Update, _: CallbackContext) -> int:
+        plant_selected = update.message.text
+        regex_groups = re.search(self.conversations.plant_status.META.regex, plant_selected)
+        gateway_id = regex_groups.group('gateway')
+        plant_name = regex_groups.group('name')
+
+        report = get_plant_data_report(gateway_id, plant_name, 99999999)
+
+        # TODO prendi le piante dal model, e stampa un report specifico
+        update.message.reply_markdown_v2(
+            f'You selected the plant "{escape_markdown(plant_selected, version=2)}"\.\n\n'
+            f'{report}\n\n'
+            f'That\'s all for now\! Hope to hear you soon\!\!',
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return ConversationHandler.END
+
+    # error case of _conv_plant_status_plant_selected step of Conversation started with '/status' command
+    def _conv_plant_status_plant_selected_error(self, update: Update, ctx: CallbackContext) -> int:
+        bridge_selected = ctx.user_data['bridge_selected']
+        plant_selected = update.message.text
+        query_results = (PlantDataModel.query
+                         .join(PlantTypeModel)
+                         .with_entities(PlantDataModel.gateway_id, PlantTypeModel.name)
+                         .filter(PlantDataModel.bridge_id == bridge_selected)
+                         .distinct()
+                         .order_by(PlantTypeModel.name)
+                         .all())
+        keys = [f'{name} ({gtw_id})' for (gtw_id, name) in query_results]
+        reply_keyboard = get_keyboard_layout(keys)
+
+        update.message.reply_markdown_v2(
+            f'Sorry, I don\'t recognize any plant named "{escape_markdown(plant_selected, version=2)}"\.\n'
+            f'Please select again the plant you want to check the status of, '
+            f'or reply with /cancel to end the conversation\.',
+            reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        )
+        return self.conversations.plant_status.plant_selected
+
+    # fallback of Conversation started with '/status' command
+    def _conv_plant_status_fallback(self, update: Update, _: CallbackContext) -> int:
+        update.message.reply_markdown_v2(f'Hope to hear you soon\!\!',
+                                         reply_markup=ReplyKeyboardRemove())
+        return ConversationHandler.END
+
+
+def get_keyboard_layout(entries: list, esc_markdown: bool = False) -> list:
+    n = len(entries)
+    if n <= 0:
+        return []
+
+    max_width = 3  # more than three elements in a row can be ugly to see
+    if n == 4:
+        # 2 rows of 2 elements is nicer than three rows with 2,1,1
+        # elements each that would result by using the calculation below
+        rows = 2
+    else:
+        rows = max((n - 1) // max_width + 1, max_width)
+
+    if esc_markdown:
+        entries = [escape_markdown(entry, version=2) for entry in entries]
+
+    # np.array_split(list, N) splits a list in N sub-lists of (almost) equal length
+    return [arr.tolist() for arr in np.array_split(entries, rows)]
+
+
+def get_faults(dataframe, df_filter, min_val, max_val) -> Tuple[int, int]:
+    """return type is a tuple of the form: (<# of less than min_val>, <# of more than max_val>)"""
+    min_faults, max_faults = 0, 0
+    if min_val is not None or max_val is not None:
+        mean: pd.Series = dataframe[df_filter].mean(axis=1)
+        if min_val is not None:  # and min_val is not None
+            min_faults = mean.size - np.count_nonzero(mean >= min_val)
+        if max_val is not None:  # and max_val is not None
+            max_faults = mean.size - np.count_nonzero(mean <= max_val)
+    return min_faults, max_faults
+
+
+def get_plant_data_report(gateway_id, plant_name, timedelta_seconds: int = 86400):
+    start = datetime.datetime.now() - datetime.timedelta(seconds=timedelta_seconds)
+    plant_data_query = (PlantDataModel.query
+                        .filter(PlantDataModel.gateway_id == gateway_id)
+                        .filter(PlantDataModel.creation_date > start))
+    df = pd.read_sql(plant_data_query.statement, plant_data_query.session.bind)
+
+    if len(df) == 0:
+        # todo ho recuperato zero risultati di oggi ?
+        # todo "qui devo ritornare un messaggio apposito"
+        raise FileNotFoundError
+
+    plant_type: PlantTypeModel
+    plant_type = (PlantTypeModel.query
+                  .join(PlantDataModel)
+                  .filter(PlantDataModel.gateway_id == gateway_id)
+                  .filter(PlantTypeModel.name == plant_name)
+                  .first())
+
+    h_faults_min, h_faults_max = get_faults(dataframe=df,
+                                            df_filter=[PlantDataModel.humidity_1.key,
+                                                       PlantDataModel.humidity_2.key,
+                                                       PlantDataModel.humidity_3.key],
+                                            min_val=plant_type.humidity_min,
+                                            max_val=plant_type.humidity_max)
+    l_faults_min, l_faults_max = get_faults(dataframe=df,
+                                            df_filter=[PlantDataModel.luminosity_1.key,
+                                                       PlantDataModel.luminosity_2.key],
+                                            min_val=plant_type.luminosity_min,
+                                            max_val=plant_type.luminosity_max)
+    t_faults_min, t_faults_max = get_faults(dataframe=df,
+                                            df_filter=[PlantDataModel.temperature.key,
+                                                       PlantDataModel.dht_temperature.key],
+                                            min_val=plant_type.temperature_min,
+                                            max_val=plant_type.temperature_max)
+
+    if sum([h_faults_min, h_faults_max, l_faults_min, l_faults_max, t_faults_min, t_faults_max]) == 0:
+        # todo usare shortcut quando tutto va bene?
+        return ' · *Everything* has been _good_'
+
+    if h_faults_min > 0 and h_faults_max > 0:
+        h_status = 'both _too damp_ and _too dry_'
+    elif h_faults_min > 0:
+        h_status = '_too dry_'
+    elif h_faults_max > 0:
+        h_status = '_too damp_'
+    else:
+        h_status = '_good_'
+    h_status = f'*Humidity* has been {h_status}'
+
+    if l_faults_min > 0 and l_faults_max > 0:
+        l_status = 'both _too bright_ and _too dark_'
+    elif l_faults_min > 0:
+        l_status = '_too dark_'
+    elif l_faults_max > 0:
+        l_status = '_too bright_'
+    else:
+        l_status = '_good_'
+    l_status = f'*Luminosity* has been {l_status}'
+
+    if t_faults_min > 0 and t_faults_max > 0:
+        t_status = 'both _too hot_ and _too cold_'
+    elif t_faults_min > 0:
+        t_status = '_too cold_'
+    elif t_faults_max > 0:
+        t_status = '_too hot_'
+    else:
+        t_status = '_good_'
+    t_status = f'*Temperature* has been {t_status}'
+
+    return (f' · {h_status}\n'
+            f' · {l_status}\n'
+            f' · {t_status}')
+
+
+telegram_bot = TelegramBot()

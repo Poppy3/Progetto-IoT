@@ -30,7 +30,7 @@
 <body class="d-flex flex-column min-vh-100">
 <header>
     <nav class="navbar navbar-expand-md navbar-light bg-light container-fluid">
-        <a href="{{ url_for('main.index') }}" class="navbar-brand ml-2 mr-0 mr-md-2">
+        <a href="{{ url_for('homepage.index') }}" class="navbar-brand ml-2 mr-0 mr-md-2">
             <img class="logo img-fluid" src="{{ url_for('static', filename='img/logo.png') }}" alt="logo" width="40" height="40">
             Flowey
         </a>
@@ -40,7 +40,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav mr-auto">
                 <a class="nav-link {% block active_navlink__home %}{% endblock %}"
-                   href="{{ url_for('main.index') }}">Home</a>
+                   href="{{ url_for('homepage.index') }}">Home</a>
                 <a class="nav-link {% block active_navlink__plant_type %}{% endblock %}"
                    href="{{ url_for('plant_type.list_all') }}">Plant Types</a>
                 <a class="nav-link {% block active_navlink__graphs %}{% endblock %}"

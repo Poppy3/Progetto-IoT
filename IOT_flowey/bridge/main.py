@@ -6,14 +6,16 @@
 # local
 from gateway_connector import GatewayConnector
 from server_connector import ServerConnector
+from telegram_bot import send_admin_message
 from utils import compose_filename, purge_filename, debug, error, info, warning, GracefulInterruptHandler
 import config as cfg
 
 # standard libraries
 from json import JSONDecodeError
 from pathlib import Path
-from serial import SerialException
 from requests import ConnectionError
+from serial import SerialException
+from telegram import TelegramError
 import datetime
 import json
 import multiprocessing as mp
@@ -46,7 +48,7 @@ def run_unsent_data_worker(port):
 
     while True:
         if buffer_dir_path.is_dir():
-            for buffer_path in sorted(buffer_dir_path.glob(compose_filename(cfg.UNSENT_DATA_BUFFER_FILENAME,
+            for buffer_path in sorted(buffer_dir_path.glob(compose_filename(cfg.UNSENT_DATA.BUFFER_FILENAME,
                                                                             suffix='*'))):
                 # read data and try to send it, keep unsent data
                 with buffer_path.open('r+', buffering=1) as f:
@@ -70,9 +72,10 @@ def run_unsent_data_worker(port):
                             warning(f'run_unsent_data_worker() - ConnectionError {e} '
                                     f'raised for {buffer_path.absolute()}', path=log_path)
 
-                        if tries >= cfg.UNSENT_DATA_MAX_TRIES:
-                            warning(f'run_unsent_data_worker() - Exceeded max tries ({cfg.UNSENT_DATA_MAX_TRIES}) for '
-                                    f'{buffer_path.absolute()}. It will be deleted.', path=log_path)
+                        if tries >= cfg.UNSENT_DATA.MAX_TRIES:
+                            warning(f'run_unsent_data_worker() - Exceeded max tries '
+                                    f'({cfg.UNSENT_DATA.MAX_TRIES}) '
+                                    f'for {buffer_path.absolute()}. It will be deleted.', path=log_path)
                             delete_file = True
 
                     if delete_file:
@@ -86,8 +89,23 @@ def run_unsent_data_worker(port):
                         f.seek(0)
                         json.dump(data, f, sort_keys=True)
                         f.truncate()
-            # end for
-        time.sleep(cfg.UNSENT_DATA_BUFFER_INTERVAL_TIME)
+
+                        if data['tries'] > cfg.UNSENT_DATA.ALERT_THRESHOLD:
+                            try:
+                                send_admin_message(f"\u26a0\ufe0fWARNING\u26a0\ufe0f\n"
+                                                   f"Bridge run_unsent_data_worker() process has tried many "
+                                                   f"times to upload unsent_data to the datacenter's server but failed "
+                                                   f"(Try #{data['tries']} of {cfg.UNSENT_DATA.MAX_TRIES}).\n"
+                                                   f"You might want to check the status of the "
+                                                   f"connection between the two systems.\n"
+                                                   f"- Bridge ID = {cfg.BRIDGE_ID}\n"
+                                                   f"- Gateway Port = {port}\n"
+                                                   f"- Data = {data}")
+                            except TelegramError as e:
+                                error(f'run_unsent_data_worker() - Raised TelegramError {e} while trying to '
+                                      f'send_admin_message() with data = {data}', path=log_path)
+            # end loop
+        time.sleep(cfg.UNSENT_DATA.INTERVAL_TIME)
 
 
 def run_bridge_worker(connection):
@@ -140,7 +158,7 @@ def run_bridge_worker(connection):
                 save_unsent_data = True
 
             if save_unsent_data:
-                buffer_path = buffer_dir_path / compose_filename(cfg.UNSENT_DATA_BUFFER_FILENAME,
+                buffer_path = buffer_dir_path / compose_filename(cfg.UNSENT_DATA.BUFFER_FILENAME,
                                                                  suffix=creation_date.strftime("%Y%m%d_%H%M%S"))
                 try:
                     with buffer_path.open('w', buffering=1) as f:
