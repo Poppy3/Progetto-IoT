@@ -35,13 +35,13 @@ active
 
 <hr/>
 
-<canvas id="myChart_humidity" width="600" height="400"></canvas>
+<canvas id="myChart_humidity" width="1000" height="400"></canvas>
 <p id="caption">All humidity measures of plant {{ plant_info.plant_id }}</p>
     <hr/>
-<canvas id="myChart_temperature" width="600" height="400"></canvas>
+<canvas id="myChart_temperature" width="1000" height="400"></canvas>
 <p id="caption">All temperature measures of plant {{ plant_info.plant_id }}</p>
     <hr/>
-<canvas id="myChart_luminosity" width="600" height="400"></canvas>
+<canvas id="myChart_luminosity" width="1000" height="400"></canvas>
 <p id="caption">All luminosity measures of plant {{ plant_info.plant_id }}</p>
     <hr/>
 
@@ -57,96 +57,58 @@ Chart.defaults.global.responsive = false;
                    "{{item}}",
                   {% endfor %}],
         datasets : [{
-            label: 'humidity_1',
+            label: 'humidity_mean',
             fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "#003f5c", // blu
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data : [{% for item in values[2] %}
+            borderColor: '#8c0000',
+            borderWidth: 1.5,
+            tension: 0.1,
+            data : [{% for item in values[8] %}
                 "{{item}}",
                   {% endfor %}],
             spanGaps: false
+        },
+        {
+            label: 'humidity_1',
+            fill: false,
+            borderColor: '#864000',
+            borderWidth: 0.5,
+            tension: 0.1,
+            data : [{% for item in values[2] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false,
+            hidden: true,
         },
         {
             label: 'humidity_2',
             fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "#50bc66",//verde
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
+            borderColor: '#d44000',
+            borderWidth: 0.5,
+            tension: 0.1,
             data : [{% for item in values[3] %}
                 "{{item}}",
                   {% endfor %}],
-            spanGaps: false
+            spanGaps: false,
+            hidden: true,
         },
         {
             label: 'humidity_3',
             fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "#bc5090", //viola
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
+            borderColor: '#ff7a00',
+            borderWidth: 0.5,
+            tension: 0.1,
             data : [{% for item in values[4] %}
                 "{{item}}",
                   {% endfor %}],
-            spanGaps: false
+            spanGaps: false,
+            hidden: true,
         },
         {
             label: 'dht_humidity',
             fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "#ffa600",//giallo
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
+            borderColor: '#ffbe0f',
+            borderWidth: 1.5,
+            tension: 0.3,
             data : [{% for item in values[0] %}
                 "{{item}}",
                   {% endfor %}],
@@ -168,7 +130,7 @@ Chart.defaults.global.responsive = false;
             annotations: [{
                 drawTime: "beforeDatasetsDraw",
                 type: "box",
-                xScaleID: "x-axis-0",
+                //xScaleID: "x-axis-0", conflitto con tutto il "time"
                 yScaleID: "y-axis-0",
                 borderWidth: 0,
                 yMin: {{plant_type.humidity_min or "null"}},
@@ -181,7 +143,16 @@ Chart.defaults.global.responsive = false;
                 xAxes: [{
                     type: 'time',
                     }],
-
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            elements: {
+                    point:{
+                        radius: 0
+                    }
             }
           }
       });
@@ -195,22 +166,9 @@ Chart.defaults.global.responsive = false;
         datasets : [{
             label: 'dht_temperature',
             fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "#003f5c", // blu
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
+            borderColor: '#126e82',
+            borderWidth: 1.5,
+            tension: 0.1,
             data : [{% for item in values[1] %}
                 "{{item}}",
                   {% endfor %}],
@@ -219,22 +177,9 @@ Chart.defaults.global.responsive = false;
         {
             label: 'temperature',
             fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "#50bc66",//verde
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
+            borderColor: '#51c4d3',
+            borderWidth: 1.5,
+            tension: 0.1,
             data : [{% for item in values[7] %}
                 "{{item}}",
                   {% endfor %}],
@@ -257,7 +202,7 @@ Chart.defaults.global.responsive = false;
             annotations: [{
                 drawTime: "beforeDatasetsDraw",
                 type: "box",
-                xScaleID: "x-axis-0",
+                //xScaleID: "x-axis-0",
                 yScaleID: "y-axis-0",
                 borderWidth: 0,
                 yMin: {{plant_type.temperature_min or "null"}},
@@ -270,7 +215,16 @@ Chart.defaults.global.responsive = false;
                 xAxes: [{
                     type: 'time',
                     }],
-
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+          elements: {
+                    point:{
+                        radius: 0
+                    }
             }
           }
       });
@@ -285,47 +239,34 @@ Chart.defaults.global.responsive = false;
         datasets : [{
             label: 'luminosity_1',
             fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "#bc5090", //viola
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
+            borderColor: '#bac964',
+            borderWidth: 0.5,
+            tension: 0.1,
             data : [{% for item in values[5] %}
                 "{{item}}",
                   {% endfor %}],
-            spanGaps: false
+            spanGaps: false,
+            hidden: true,
         },
         {
             label: 'luminosity_2',
             fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "#ffa600",//giallo
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
+            borderColor: '#438a5e',
+            borderWidth: 0.5,
+            tension: 0.1,
             data : [{% for item in values[6] %}
+                "{{item}}",
+                  {% endfor %}],
+            spanGaps: false,
+            hidden: true,
+        },
+        {
+            label: 'luminosity_mean',
+            fill: false,
+            borderColor: '#436f8a',
+            borderWidth: 1.5,
+            tension: 0.1,
+            data : [{% for item in values[9] %}
                 "{{item}}",
                   {% endfor %}],
             spanGaps: false
@@ -346,7 +287,7 @@ Chart.defaults.global.responsive = false;
             annotations: [{
                 drawTime: "beforeDatasetsDraw",
                 type: "box",
-                xScaleID: "x-axis-0",
+                //xScaleID: "x-axis-0",
                 yScaleID: "y-axis-0",
                 borderWidth: 0,
                 yMin: {{plant_type.luminosity_min or "null"}},
@@ -358,12 +299,21 @@ Chart.defaults.global.responsive = false;
             scales: {
                 xAxes: [{
                     type: 'time',
-                    }],
-
+                }],
+               yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            elements: {
+                    point:{
+                        radius: 0
+                    }
             }
           }
       });
-// -----CHART_LUMIKNOSITY END------
+// -----CHART_LUMINOSITY END------
 
 </script>
 

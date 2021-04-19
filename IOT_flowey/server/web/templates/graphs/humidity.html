@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+
+{# puts the .active class into base.html navbar link #}
+{% block active_navlink__graphs %}
+active
+{% endblock %}
+
+{% block content %}
+
+<h1>Humidity measures of all plants</h1>
+    <hr/>
+
+<table class="table">
+<caption>List of registered plants</caption>
+    <thead class="thead-light thead-double">
+        <tr>
+            <th>Id</th>
+            <th>Bridge</th>
+            <th>Gateway</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+                <tr class="bg-light">
+                    <td><a href={{ url_for('graphs.details', plant_id=item[0]) }}>{{ item[0] }}</a></td>
+                    <td>{{ item[2] }}</td>
+                    <td>{{ item[1] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<hr/>
+
+<canvas id="myChart_dht" width="1000" height="400"></canvas>
+    <p id="caption">Humidity measured outside of terrain</p>
+    <hr/>
+<canvas id="myChart_mean" width="1000" height="400"></canvas>
+    <p id="caption">Humidity mean measured inside the terrain</p>
+    <hr/>
+
+    <script>
+// Global parameters:
+// do not resize the chart canvas when its container does (keep at 600x400px)
+Chart.defaults.global.responsive = false;
+
+// -----DEFINE CHART_dht HERE------
+      var chartData_dht = {
+        labels : [{% for item in labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [
+            {% for item in data %}
+            {
+            label: '{{ item[0] }}',
+            fill: false,
+            borderColor: '#8c0000',
+            borderWidth: 1.5,
+            tension: 0.1,
+            data : [{% for value in item[3] %}
+                '{{value}}',
+                  {% endfor %}],
+            spanGaps: true
+        },
+        {% endfor %}
+        ]
+      }
+
+// get chart canvas
+      var ctx = document.getElementById("myChart_dht").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData_dht,
+          options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            elements: {
+                    point:{
+                        radius: 0
+                    }
+            }
+          }
+      });
+// -----CHART_dht END------
+
+
+// -----DEFINE CHART_mean HERE------
+      var chartData_mean = {
+        labels : [{% for item in labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets : [
+            {% for item in data %}
+            {
+            label: '{{ item[0] }}',
+            fill: false,
+            borderColor: '#8c0000',
+            borderWidth: 1.5,
+            tension: 0.1,
+            data : [{% for value in item[4] %}
+                '{{value}}',
+                  {% endfor %}],
+            spanGaps: true
+        },
+        {% endfor %}
+        ]
+      }
+
+// get chart canvas
+      var ctx = document.getElementById("myChart_mean").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData_mean,
+          options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            elements: {
+                    point:{
+                        radius: 0
+                    }
+            }
+          }
+      });
+// -----CHART_mean END------
+
+
+    </script>
+{% endblock %}
