@@ -46,7 +46,7 @@ def get_faults(dataframe, df_filter, min_val, max_val) -> Tuple[int, int]:
     return min_faults, max_faults
 
 
-def get_plant_data_report(gateway_id, plant_name, timedelta_seconds: int = 864000):
+def get_plant_data_report(gateway_id, plant_name, timedelta_seconds: int = 86400):
     start = datetime.datetime.now() - datetime.timedelta(seconds=timedelta_seconds)
     plant_data_query = (PlantDataModel.query
                         .filter(PlantDataModel.gateway_id == gateway_id)

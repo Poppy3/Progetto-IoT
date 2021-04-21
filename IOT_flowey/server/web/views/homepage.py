@@ -8,4 +8,4 @@ homepage_bp = Blueprint('homepage', __name__)
 @homepage_bp.route('/')
 def index():
     title = 'Homepage'
-    return render_template('base.html', title=title)
+    return render_template('homepage/homepage.html', title=title)
