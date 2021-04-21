@@ -8,7 +8,7 @@ active
 
 {% block content %}
 
-<h1>Humidity measures of all plants</h1>
+<h1>{{ measure }} measures of all plants</h1>
     <hr/>
 
 <table class="table">
@@ -33,11 +33,13 @@ active
 <hr/>
 
 <canvas id="myChart_dht" width="1000" height="400"></canvas>
-    <p id="caption">Humidity measured outside of terrain</p>
+    <p id="caption">{{ measure }} measured outside of terrain</p>
     <hr/>
+{% if "Luminosity" not in measure %}
 <canvas id="myChart_mean" width="1000" height="400"></canvas>
-    <p id="caption">Humidity mean measured inside the terrain</p>
+    <p id="caption">{{ measure }} measured inside the terrain</p>
     <hr/>
+{% endif %}
 
     <script>
 // Global parameters:
