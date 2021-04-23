@@ -4,4 +4,50 @@
 
 
 
+  <h1 style="text-align:center">Flowey</h1>
+  <h3 style="text-align:center">The buddy to keep plants alive</h3>
+  <img src="{{ url_for('static', filename='img/286.jpg') }}" alt="Plant" style="width:100%;">
+
+<div class="row mb-3 align-items-center">
+    <div class="col">
+        <h2>Who is Flowey?</h2>
+        <p>
+            Flowey is the buddy you need to keep your plants alive!
+            Ever wondered how to talk to a plant? Flowey gives you the opportunity!
+            Just set up the sensors in the vase and start communicating with your plant through Telegram,
+            or access all the data trough the website. <br>
+            No more guessing if the plant needs water, if it's too cold or if it needs to be placed in another spot.
+            Flowey will tell you if everything it's okay or if it needs some adjustments.
+        </p>
+    </div>
+       <div class="col">
+        <h2>About the project</h2>
+        <p>
+            Flowey is part of the project for the exam "Informatica Industriale e IOT" for the Computer Engineering
+            degree in UNIMORE.<br>
+            We are a team of 3 people who can't seem to keep one single plant alive, not even a cactus,
+            and we decided to invent a system to help us in our "leafy" journey.<br>
+            The idea is to extend the IOT paradigm to an object which can be found in many households, our plants.
+        </p>
+    </div>
+</div>
+
+    <h2 style="text-align:center">How does it work</h2>
+
+<div class="row mb-3 align-items-center">
+<div class="col-auto">
+    <img src="{{ url_for('static', filename='img/system_photo.jpg') }}" alt="The system" style="width:350px;">
+</div>
+    <div class="col">
+        <p>
+            Flowey's systems is composed of various sensors that can be mounted directly on your plant's vase,
+            to monitor humidity, temperature and luminosity, giving a well rounded idea of the plant well being.<br>
+            The data read by the senosors is collected by a gateway and sent to a RaspberryPi that servers
+            as as the bridge. In development we only used one Arduino and one RaspberryPi but there is no limit
+            to the number of bridges and gateway, since the system is scalable.<br>
+            The bridge does come elaboration on the data and then sends everything to the Datacenter, that's
+            hosting the telegram bot and the website server.
+        </p>
+    </div>
+</div>
 {% endblock %}
