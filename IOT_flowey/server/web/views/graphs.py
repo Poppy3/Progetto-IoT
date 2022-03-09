@@ -1,12 +1,13 @@
-from pathlib import Path
-
 from ..models.plant_type import PlantTypeModel, db
 from ..models.plant_data import PlantDataModel, db
 from flask import Blueprint, render_template
+from pathlib import Path
 from sqlalchemy.exc import OperationalError
 import json
 
+
 graphs_bp = Blueprint('graphs', __name__, url_prefix='/graphs')
+
 
 @graphs_bp.route('/')
 def list_all():
@@ -51,8 +52,8 @@ def details(plant_id):
     except OperationalError:
         plant_type = None
 
-    plant_type.humidity_max=70.0
-    plant_type.humidity_min=30.0
+    plant_type.humidity_max = 70.0
+    plant_type.humidity_min = 30.0
 
     return render_template('graphs/details.html',
                            values=data,

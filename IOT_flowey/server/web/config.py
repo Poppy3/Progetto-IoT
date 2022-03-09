@@ -13,7 +13,7 @@ TEMPLATES_AUTO_RELOAD = True
 # Extension: SQLAlchemy configuration
 ###############################################################################
 # Database local machine
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dev.sqlite3')
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.dirname(os.path.realpath(__file__)), 'flowey_dev.sqlite3')
 # Database hosted by freemysqlhosting
 #SQLALCHEMY_DATABASE_URI = 'mysql://sql11398075:X3LHKv2R4k@sql11.freemysqlhosting.net/sql11398075'
 # Database hosted by pythonanywhere
@@ -23,6 +23,7 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     "pool_recycle": 250,
 }
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+#PYTHONANYWHERE_DATABASE_URI = 'mysql://iotproject:XccVBVp4kkUwFdB@iotproject.mysql.eu.pythonanywhere-services.com/iotproject$default'
 
 
 ###############################################################################

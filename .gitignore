@@ -2,3 +2,14 @@
 __pycache__/
 connections_storage.json
 _COM3/
+/IOT_flowey/server/web/dev.sqlite3.old
+/IOT_flowey/server/flowey_dev.sqlite3
+/IOT_flowey/server/plant_data.csv
+/IOT_flowey/server/plant_data.json
+/IOT_flowey/server/plant_data__trimmed.json
+/IOT_flowey/server/plant_type.csv
+/IOT_flowey/server/plant_type.json
+/IOT_flowey/bridge/bridge_worker-COM3.log
+/IOT_flowey/bridge/main.log
+/IOT_flowey/bridge/unsent_data_worker-COM3.log
+/IOT_flowey/server/.ipynb_checkpoints/

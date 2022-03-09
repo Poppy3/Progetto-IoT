@@ -3,6 +3,7 @@ Flask==1.1.2
 Flask-RESTful==0.3.8
 Flask-SQLAlchemy==2.4.4
 Flask-WTF==0.14.3
+hampel==0.0.5
 pandas==1.2.3
 pystan==2.19.1.1
 python-dotenv==0.15.0

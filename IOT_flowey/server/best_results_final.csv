@@ -1,0 +1,2 @@
+,params
+5,"{'changepoint_prior_scale': 0.001, 'changepoint_range': 0.9, 'seasonality_prior_scale': 0.5, 'seasonality_mode': 'additive'}"
