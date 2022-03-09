@@ -2,7 +2,6 @@
  * This file contains any custom styles created by us
  */
 
-
 .collapsable [data-toggle="collapse"] {
     /*display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
@@ -60,4 +59,3 @@ tr.pr-0 td {
     border-top: none;
     padding-top: 0;
 }
-

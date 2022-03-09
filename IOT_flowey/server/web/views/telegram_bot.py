@@ -39,6 +39,6 @@ def webhook():
         telegram_bot.dispatcher.process_update(update)
 
     except Exception as e:
-        print('ERRORE - views/telegram_bot.py .webhook()')
+        print('ERROR - views/telegram_bot.py .webhook()')
         print(e)
     return ''

@@ -37,7 +37,7 @@ def list_all():
 def details(plant_type_id):
     plant_type = PlantTypeModel.query.get_or_404(plant_type_id)
     return render_template('plant_type/details.html',
-                           title=plant_type_id,
+                           title=plant_type.name,
                            plant_type_model=plant_type)
 
 
@@ -91,7 +91,7 @@ def edit(plant_type_id):
             db.session.commit()
             success = 'Successfully edited the plant type.'
     return render_template('plant_type/form_edit.html',
-                           title='Edit Plant-Type',
+                           title=f'Edit {plant_type.name}',
                            plant_type_model=plant_type,
                            plant_type_form=form,
                            form_endpoint={'endpoint': 'plant_type.edit',
