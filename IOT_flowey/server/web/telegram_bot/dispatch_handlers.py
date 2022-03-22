@@ -144,7 +144,7 @@ class PlantStatusCLS(AbstractHandler):
             # TODO prendi le piante dal model, e stampa un report sommario
             update.message.reply_markdown_v2(
                 f'You selected the group "{escape_markdown_V2(bridge_selected)}"\.\n\n'
-                f'<Qui mostro il report sommario delle piante del bridge selezionato\>\n\n'
+                # f'<Qui mostro il report sommario delle piante del bridge selezionato\>\n\n'
                 f'Please select the plant you want to check the status of, '
                 f'or reply with /cancel to end the conversation\.',
                 reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)

@@ -25,16 +25,16 @@ active
         <tr>
             <th scope="col"></th>
             <th scope="col">Name</th>
-            <th scope="col" colspan="3">Humidity</th>
-            <th scope="col" colspan="3">Luminosity</th>
-            <th scope="col" colspan="3">Temperature</th>
+            <th scope="col" colspan="2">Humidity</th>
+            <th scope="col" colspan="2">Luminosity</th>
+            <th scope="col" colspan="2">Temperature</th>
         </tr>
         <tr>
             <th scope="col" colspan="2"></th>
             {% for i in range(3) %}
                 <th scope="col" class="small">Min</th>
                 <th scope="col" class="small">Max</th>
-                <th scope="col" class="small">Tolerance</th>
+                {#<th scope="col" class="small">Tolerance</th>#}
             {% endfor %}
         </tr>
         </thead>
@@ -45,15 +45,15 @@ active
                         <i class="bi bi-chevron-right"></i>
                     </td>
                     <td><a href="{{ url_for('plant_type.details', plant_type_id=item.id) }}">{{ item.name }}</a></td>
-                    <td class="pr-0 fit">{{ item.humidity_min or '-' }}</td>
-                    <td class="fit">{{ item.humidity_max or '-' }}</td>
-                    <td>{{ human_readable_time(item.humidity_tolerance_time) or '-' }}</td>
-                    <td class="pr-0 fit">{{ item.luminosity_min or '-' }}</td>
-                    <td class="fit">{{ item.luminosity_max or '-' }}</td>
-                    <td>{{ human_readable_time(item.luminosity_tolerance_time) or '-' }}</td>
-                    <td class="pr-0 fit">{{ item.temperature_min or '-' }}</td>
-                    <td class="fit">{{ item.temperature_max or '-' }}</td>
-                    <td>{{ human_readable_time(item.temperature_tolerance_time) or '-' }}</td>
+                    <td class="pr-0">{{ item.humidity_min or '-' }}</td>
+                    <td class="">{{ item.humidity_max or '-' }}</td>
+                    {#<td>{{ human_readable_time(item.humidity_tolerance_time) or '-' }}</td>#}
+                    <td class="pr-0">{{ item.luminosity_min or '-' }}</td>
+                    <td class="">{{ item.luminosity_max or '-' }}</td>
+                    {#<td>{{ human_readable_time(item.luminosity_tolerance_time) or '-' }}</td>#}
+                    <td class="pr-0">{{ item.temperature_min or '-' }}</td>
+                    <td class="">{{ item.temperature_max or '-' }}</td>
+                    {#<td>{{ human_readable_time(item.temperature_tolerance_time) or '-' }}</td>#}
                 </tr>
                 <tr id="description{{ loop.index }}" class="collapse collapsed">
                     <td colspan="11">

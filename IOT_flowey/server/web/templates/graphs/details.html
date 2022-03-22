@@ -1,320 +1,136 @@
-{% from "macros/_render_graph.html" import render_graph %}
+{% from "macros/_render_graph.html" import render_graph with context %}
 
 {% extends "base.html" %}
 
 
-{# puts the .active class into base.html navbar link #}
-{% block active_navlink__graphs %}
-active
+{% block head_css %}
+<style>
+    .tooltip-inner {
+        min-width: 100px;
+        max-width: 100%;
+    }
+</style>
 {% endblock %}
 
-{% block content %}
-    <div class="row mb-3 align-items-center">
-    <div class="col">
-        <h1>{{ title }}</h1>
-    </div>
-    <div class="col-auto">
-        <a class="btn btn-primary my-2" role="button"
-           href="{{ url_for('plant_type.details', plant_type_id=plant_type.id) }}">
-            <span class="d-none d-md-inline">Plant type details </span>
-        </a>
-    </div>
-</div>
-    <hr/>
-<div class="row">
-    <div class="col">
-        Plant type: {{ plant_type.name }}
-    </div>
-    <div class="col">
-        Gateway id: {{ plant_info.gateway_id }}
-    </div>
-    <div class="col">
-        Bridge id: {{ plant_info.bridge_id }}
-    </div>
-</div>
 
-<hr/>
-
-<canvas id="myChart_humidity" width="1000" height="400"></canvas>
-<p id="caption">All humidity measures of plant {{ plant_info.plant_id }}</p>
-    <hr/>
-<canvas id="myChart_temperature" width="1000" height="400"></canvas>
-<p id="caption">All temperature measures of plant {{ plant_info.plant_id }}</p>
-    <hr/>
-<canvas id="myChart_luminosity" width="1000" height="400"></canvas>
-<p id="caption">All luminosity measures of plant {{ plant_info.plant_id }}</p>
-    <hr/>
-
-
+{% block head_js %}
 <script>
-// Global parameters:
-// do not resize the chart canvas when its container does (keep at 600x400px)
-Chart.defaults.global.responsive = false;
-
-// -----DEFINE CHART_HUMIDITY HERE------
-      var chartData_humidity = {
-        labels : [{% for item in labels %}
-                   "{{item}}",
-                  {% endfor %}],
-        datasets : [{
-            label: 'humidity_median',
-            fill: false,
-            borderColor: '#8c0000',
-            borderWidth: 1.5,
-            tension: 0.1,
-            data : [{% for item in values[8] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false
-        },
-        {
-            label: 'humidity_1',
-            fill: false,
-            borderColor: '#864000',
-            borderWidth: 0.5,
-            tension: 0.1,
-            data : [{% for item in values[2] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false,
-            hidden: true,
-        },
-        {
-            label: 'humidity_2',
-            fill: false,
-            borderColor: '#d44000',
-            borderWidth: 0.5,
-            tension: 0.1,
-            data : [{% for item in values[3] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false,
-            hidden: true,
-        },
-        {
-            label: 'humidity_3',
-            fill: false,
-            borderColor: '#ff7a00',
-            borderWidth: 0.5,
-            tension: 0.1,
-            data : [{% for item in values[4] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false,
-            hidden: true,
-        },
-        {
-            label: 'dht_humidity',
-            fill: false,
-            borderColor: '#ffbe0f',
-            borderWidth: 1.5,
-            tension: 0.3,
-            data : [{% for item in values[0] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false
-        }
-        ]
-      }
-
-// get chart canvas
-      var ctx = document.getElementById("myChart_humidity").getContext("2d");
-
-      // create the chart using the chart canvas
-      var myChart = new Chart(ctx, {
-        type: 'line',
-        data: chartData_humidity,
-          options: {
-            {% if plant_type.humidity_min and plant_type.humidity_max %}
-            annotation: {
-            annotations: [{
-                drawTime: "beforeDatasetsDraw",
-                type: "box",
-                //xScaleID: "x-axis-0", conflitto con tutto il "time"
-                yScaleID: "y-axis-0",
-                borderWidth: 0,
-                yMin: {{plant_type.humidity_min or "null"}},
-                yMax: {{plant_type.humidity_max or "null"}},
-                backgroundColor: "rgba(46, 204, 113,0.3)"
-                }]
-            },
-            {% endif %}
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    }],
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            },
-            elements: {
-                    point:{
-                        radius: 0
-                    }
-            }
-          }
-      });
-// -----CHART_HUMIDITY END------
-
-// -----DEFINE CHART_TEMPERATURE HERE-----------------------------------
-      var chartData_temperature = {
-        labels : [{% for item in labels %}
-                   "{{item}}",
-                  {% endfor %}],
-        datasets : [{
-            label: 'dht_temperature',
-            fill: false,
-            borderColor: '#126e82',
-            borderWidth: 1.5,
-            tension: 0.1,
-            data : [{% for item in values[1] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false
-        },
-        {
-            label: 'temperature',
-            fill: false,
-            borderColor: '#51c4d3',
-            borderWidth: 1.5,
-            tension: 0.1,
-            data : [{% for item in values[7] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false
-        },
-
-        ]
-      }
-
-// get chart canvas
-      var ctx = document.getElementById("myChart_temperature").getContext("2d");
-
-      // create the chart using the chart canvas
-      var myChart = new Chart(ctx, {
-        type: 'line',
-        data: chartData_temperature,
-          options: {
-            {% if plant_type.temperature_min and plant_type.temperature_max %}
-            annotation: {
-            annotations: [{
-                drawTime: "beforeDatasetsDraw",
-                type: "box",
-                //xScaleID: "x-axis-0",
-                yScaleID: "y-axis-0",
-                borderWidth: 0,
-                yMin: {{plant_type.temperature_min or "null"}},
-                yMax: {{plant_type.temperature_max or "null"}},
-                backgroundColor: "rgba(46, 204, 113,0.3)"
-                }]
-            },
-            {% endif %}
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    }],
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            },
-          elements: {
-                    point:{
-                        radius: 0
-                    }
-            }
-          }
-      });
-  // -----CHART_TEMPERATURE END------
+    function switch_predict(el) {
+        /* set the value for 'predict' query param and reload the page */
+        const parser = new URL(window.location);
+        parser.searchParams.set('predict', el.checked);
+        window.location = parser.href;
+    }
 
 
-// -----DEFINE CHART_LUMINOSITY HERE------
-      var chartData_luminosity = {
-        labels : [{% for item in labels %}
-                   "{{item}}",
-                  {% endfor %}],
-        datasets : [{
-            label: 'luminosity_1',
-            fill: false,
-            borderColor: '#bac964',
-            borderWidth: 0.5,
-            tension: 0.1,
-            data : [{% for item in values[5] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false,
-            hidden: true,
-        },
-        {
-            label: 'luminosity_2',
-            fill: false,
-            borderColor: '#438a5e',
-            borderWidth: 0.5,
-            tension: 0.1,
-            data : [{% for item in values[6] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false,
-            hidden: true,
-        },
-        {
-            label: 'luminosity_mean',
-            fill: false,
-            borderColor: '#436f8a',
-            borderWidth: 1.5,
-            tension: 0.1,
-            data : [{% for item in values[9] %}
-                "{{item}}",
-                  {% endfor %}],
-            spanGaps: false
-        }
-        ]
-      }
-
-// get chart canvas
-      var ctx = document.getElementById("myChart_luminosity").getContext("2d");
-
-      // create the chart using the chart canvas
-      var myChart = new Chart(ctx, {
-        type: 'line',
-        data: chartData_luminosity,
-          options: {
-            {% if plant_type.luminosity_min and plant_type.luminosity_max %}
-            annotation: {
-            annotations: [{
-                drawTime: "beforeDatasetsDraw",
-                type: "box",
-                //xScaleID: "x-axis-0",
-                yScaleID: "y-axis-0",
-                borderWidth: 0,
-                yMin: {{plant_type.luminosity_min or "null"}},
-                yMax: {{plant_type.luminosity_max or "null"}},
-                backgroundColor: "rgba(46, 204, 113,0.3)"
-                }]
-            },
-            {% endif %}
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                }],
-               yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            },
-            elements: {
-                    point:{
-                        radius: 0
-                    }
-            }
-          }
-      });
-// -----CHART_LUMINOSITY END------
-
+    $(function () {
+        /* initialize tooltips on the page */
+        $('[data-toggle="tooltip"]').tooltip();
+    })
 </script>
+{% endblock %}
+
+
+{# puts the .active class into base.html navbar link #}
+{% block active_navlink__graphs %}
+    active
+{% endblock %}
+
+
+{% block content %}
+    {% set time_window = request.args.get('time_window', default='last_week') %}
+    {% set show_predict = request.args.get('predict', default='false').lower() == 'true' %}
+
+    <div class="row my-3 align-items-center">
+        <div class="col">
+            <h1>
+                Graphs for {{ plant_type.name }}&nbsp;-&nbsp;
+                <span style="text-decoration: lightgrey dotted underline;"
+                      data-toggle="tooltip" data-placement="bottom" title="UUID: {{ plant_info.plant_id }}"
+                >
+                    {{ plant_info.gateway_id }}
+                </span>
+            </h1>
+        </div>
+        <div class="col-auto">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="predict_switch" onchange="switch_predict(this)"
+                    {% if show_predict %}checked="checked"{% endif %}
+                >
+                <label class="custom-control-label" for="predict_switch">Show Predictions</label>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs nav-fill">
+        <li class="nav-item">
+            <a class="nav-link {% if time_window not in ['last_month', 'all_time'] %}active{% endif %}"
+               href="{{ url_for('graphs.details',
+                                plant_data_id=plant_info.plant_id,
+                                time_window='last_week',
+                                predict=show_predict|lower) }}"
+            >Last Week</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if time_window == 'last_month' %}active{% endif %}"
+               href="{{ url_for('graphs.details',
+                                plant_data_id=plant_info.plant_id,
+                                time_window='last_month',
+                                predict=show_predict|lower) }}"
+            >Last Month</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if time_window == 'all_time' %}active{% endif %}"
+               href="{{ url_for('graphs.details',
+                                plant_data_id=plant_info.plant_id,
+                                time_window='all_time',
+                                predict=show_predict|lower) }}"
+            >All Time</a>
+        </li>
+    </ul>
+
+    <div class="row my-4">
+        <div class="col-12">
+            <h4>Plant Info</h4>
+        </div>
+        <div class="col">
+            Plant type:
+            <a href="{{ url_for('plant_type.details', plant_type_id=plant_type.id) }}">
+                {{ plant_type.name }}&nbsp;(Details)
+            </a>
+        </div>
+        <div class="col-auto">
+            Plant UUID: {{ plant_info.plant_id }}
+        </div>
+        <div class="col">
+            Gateway id: {{ plant_info.gateway_id }}
+        </div>
+        <div class="col">
+            Bridge id: {{ plant_info.bridge_id }}
+        </div>
+    </div>
+
+
+    <h4>Terrain humidity</h4>
+    <canvas id="humidity" width="1000" height="400"></canvas>
+    {{ render_graph('humidity', chart_data['humidity']) }}
+
+    <hr class="my-4"/>
+
+    <h4>Air humidity</h4>
+    <canvas id="dht_humidity" width="1000" height="400"></canvas>
+    {{ render_graph('dht_humidity', chart_data['dht_humidity']) }}
+
+    <hr class="my-4"/>
+
+    <h4>Luminosity</h4>
+    <canvas id="luminosity" width="1000" height="400"></canvas>
+    {{ render_graph('luminosity', chart_data['luminosity']) }}
+
+    <hr class="my-4"/>
+
+    <h4>Air Temperature</h4>
+    <canvas id="temperature" width="1000" height="400"></canvas>
+    {{ render_graph('temperature', chart_data['temperature']) }}
 
 {% endblock %}

@@ -80,5 +80,3 @@ if __name__ == '__main__':
     engine = db.create_engine(DATABASE_URI)
     df_trimmed.to_sql(name='plant_data', con=engine, index=False)
     dft.to_sql(name='plant_type', con=engine, index=False)
-
-

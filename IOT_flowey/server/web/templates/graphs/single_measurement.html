@@ -1,3 +1,5 @@
+{% from "macros/_render_graph.html" import render_graph with context %}
+
 {% extends "base.html" %}
 
 
@@ -6,7 +8,21 @@
 active
 {% endblock %}
 
+
 {% block content %}
+
+    <h4>Terrain humidity</h4>
+    <canvas id="humidity" width="1000" height="400"></canvas>
+    {{ render_graph('humidity', chart_data['humidity']) }}
+
+    <hr class="my-4"/>
+
+    <h4>Air humidity</h4>
+    <canvas id="dht_humidity" width="1000" height="400"></canvas>
+    {{ render_graph('dht_humidity', chart_data['dht_humidity']) }}
+
+    <hr><hr><hr>
+
 
 <h1>{{ measure }} measures of all plants</h1>
     <hr/>
@@ -23,7 +39,7 @@ active
         <tbody>
             {% for item in data %}
                 <tr class="bg-light">
-                    <td><a href={{ url_for('graphs.details', plant_id=item[0]) }}>{{ item[0] }}</a></td>
+                    <td><a href="{{ url_for('graphs.details', plant_data_id=item[0]) }}">{{ item[0] }}</a></td>
                     <td>{{ item[2] }}</td>
                     <td>{{ item[1] }}</td>
                 </tr>

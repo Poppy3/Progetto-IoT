@@ -1,9 +1,14 @@
+"""
+from ..config import FBPROPHET_HYPERPARAMS_PATH
 from ..models.plant_type import PlantTypeModel, db
 from ..models.plant_data import PlantDataModel, db
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, abort
 from pathlib import Path
 from sqlalchemy.exc import OperationalError
 import json
+import pandas as pd
+
+from fbprophet import Prophet
 
 
 graphs_bp = Blueprint('graphs', __name__, url_prefix='/graphs')
@@ -12,7 +17,11 @@ graphs_bp = Blueprint('graphs', __name__, url_prefix='/graphs')
 @graphs_bp.route('/')
 def list_all():
     try:
-        plants = PlantDataModel.query.with_entities(PlantDataModel.plant_id).distinct().all()
+        plant_data = PlantDataModel.query.distinct(PlantDataModel.plant_id).all()
+
+        # plants = dict of {plant_data_id: corresponding plant_type.name} entries
+        plants = {p_d.plant_id: (PlantTypeModel.query.get(p_d.plant_type_id)).name for p_d in plant_data}
+
     except OperationalError:
         plants = None
 
@@ -20,50 +29,131 @@ def list_all():
                            title='Graphs',
                            plants=plants)
 
+def
 
 @graphs_bp.route('/id/<plant_id>')
 def details(plant_id):
     try:
-        plant_measurements = PlantDataModel.query.filter_by(plant_id=plant_id).order_by(PlantDataModel.creation_date).all()
+        df = pd.read_sql(sql=PlantDataModel.query.filter_by(plant_id=plant_id)
+                         .order_by(PlantDataModel.creation_date).statement,
+                         con=db.engine)
+        if df.empty:
+            abort(404)
+
+        plant_info = df.loc[0]  # getting first row of dataframe
+        plant_type_id = int(plant_info['plant_type_id'])
+        plant_type = PlantTypeModel.query.get_or_404(plant_type_id)
+
+        df['humidity_median'] = df[['humidity_1', 'humidity_2', 'humidity_3']].median(axis=1)
+        df['luminosity_mean'] = df[['luminosity_1', 'luminosity_2']].mean(axis=1)
+
+        df_dht_humidity = df[['creation_date', 'dht_humidity']].copy()
+        df_dht_humidity = df_dht_humidity.rename(columns={"creation_date": "ds", "dht_humidity": "y"})
+
+        print(df_dht_humidity.head(5))
+
+
+        df_hyperparams = pd.read_csv(FBPROPHET_HYPERPARAMS_PATH)
+
+        labels = df['creation_date']
+
+        humidity_scale = df[['humidity_1', 'humidity_2', 'humidity_3']].max().max() / df['dht_humidity'].max()
+
+        chart_data = {
+            'dht_humidity': {
+                'labels': labels,
+                'datasets': [
+                    {
+                        'color': '#126e82',
+                        'label': 'DHT Humidity Sensor',
+                        'data': df['dht_humidity'],
+                    },
+                ],
+                'min': plant_type.humidity_min,
+                'max': plant_type.humidity_max,
+            },
+            'humidity': {
+                'labels': labels,
+                'datasets': [
+                    {
+                        'color': '#8c0000',
+                        'label': 'Humidity Median',
+                        'data': df['humidity_median'].divide(humidity_scale),
+                    },
+                    {
+                        'color': '#864000',
+                        'label': 'Sensor 1',
+                        'data': df['humidity_1'].divide(humidity_scale),
+                        'hidden': 'true',
+                    },
+                    {
+                        'color': '#d44000',
+                        'label': 'Sensor 2',
+                        'data': df['humidity_2'].divide(humidity_scale),
+                        'hidden': 'true',
+                    },
+                    {
+                        'color': '#ff7a00',
+                        'label': 'Sensor 3',
+                        'data': df['humidity_3'].divide(humidity_scale),
+                        'hidden': 'true',
+                    },
+                ],
+                'min': plant_type.humidity_min,
+                'max': plant_type.humidity_max,
+            },
+            'temperature': {
+                'labels': labels,
+                'datasets': [
+                    {
+                        'color': '#126e82',
+                        'label': 'DHT Temperature Sensor',
+                        'data': df['dht_temperature'],
+                    },
+                    {
+                        'color': '#51c4d3',
+                        'label': 'Termoresistor Sensor',
+                        'data': df['temperature'],
+                    },
+                ],
+                'min': plant_type.temperature_min,
+                'max': plant_type.temperature_max,
+            },
+            'luminosity': {
+                'labels': labels,
+                'datasets': [
+                    {
+                        'color': '#436f8a',
+                        'label': 'Luminosity Mean',
+                        'data': df['luminosity_mean'],
+                    },
+                    {
+                        'color': '#bac964',
+                        'label': 'Sensor 1',
+                        'data': df['luminosity_1'],
+                        'hidden': 'true',
+                    },
+                    {
+                        'color': '#438a5e',
+                        'label': 'Sensor 2',
+                        'data': df['luminosity_2'],
+                        'hidden': 'true',
+                    },
+                ],
+                'min': plant_type.luminosity_min,
+                'max': plant_type.luminosity_max,
+            },
+        }
+
+        return render_template('graphs/details.html',
+                               title=f'Graphs for {plant_info.plant_id}',
+                               plant_type=plant_type,
+                               plant_info=plant_info,
+                               chart_data=chart_data,)
+
     except OperationalError:
-        plant_measurements = None
-    labels = []
-    data = []
-    for i in range(10):
-        data.append([])
-    for item in plant_measurements:
-        labels.append(item.creation_date)
-        data[0].append(item.dht_humidity)
-        data[1].append(item.dht_temperature)
-        data[2].append(item.humidity_1)
-        data[3].append(item.humidity_2)
-        data[4].append(item.humidity_3)
-        data[5].append(item.luminosity_1)
-        data[6].append(item.luminosity_2)
-        data[7].append(item.temperature)
-        """ median works best for three values, it's more robust to errors """
-        # humidity_mean = (item.humidity_1 + plant_item.humidity_2 + item.humidity_3) / 3
-        humidity_median = sorted([item.humidity_1, item.humidity_2, item.humidity_3])[1]
-        data[8].append(humidity_median)  # humidity average
-        data[9].append((item.luminosity_1 + item.luminosity_2) / 2)  # luminosity average
-
-    plant_info = plant_measurements[0]
-
-    type_id = plant_measurements[0].plant_type_id
-    try:
-        plant_type = PlantTypeModel.query.filter_by(id=type_id).first()
-    except OperationalError:
-        plant_type = None
-
-    plant_type.humidity_max = 70.0
-    plant_type.humidity_min = 30.0
-
-    return render_template('graphs/details.html',
-                           values=data,
-                           labels=labels,
-                           title=f'Measurements of {plant_type.name}',
-                           plant_type=plant_type,
-                           plant_info=plant_info)
+        print('operational error')
+        abort(500)
 
 
 @graphs_bp.route('/humidity')
@@ -89,7 +179,7 @@ def humidity_graph():
         for data_item in data:
             if data_item[0] == plant_item.plant_id:
                 data_item[3].append(plant_item.dht_humidity)
-                """ median works best for three values, it's more robust to errors """
+                # median works best for three values, it's more robust to errors
                 # humidity_mean = (plant_item.humidity_1 + plant_item.humidity_2 + plant_item.humidity_3) / 3
                 humidity_median = sorted([plant_item.humidity_1, plant_item.humidity_2, plant_item.humidity_3])[1]
                 data_item[4].append(humidity_median)
@@ -295,3 +385,4 @@ def luminosity_graph_json():
                            labels=labels,
                            data=data,
                            measure="Luminosity")
+"""

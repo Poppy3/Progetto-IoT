@@ -13,11 +13,6 @@ def utility_title(title='Plant Type'):
     return dict(title=title)
 
 
-@plant_type_bp.context_processor
-def utility_human_readable_time():
-    return dict(human_readable_time=human_readable_time)
-
-
 @plant_type_bp.route('/')
 def list_all():
     page = request.args.get('page', default=1, type=int)

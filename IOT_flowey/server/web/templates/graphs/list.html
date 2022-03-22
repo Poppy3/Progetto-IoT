@@ -6,7 +6,7 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="row mb-3 align-items-center">
+<div class="row">
     <div class="col">
         <h1>Plants</h1>
     </div>
@@ -21,9 +21,13 @@ active
         </tr>
         </thead>
         <tbody>
-            {% for item in plants %}
+            {% for plant_data_id, plant_type_name in plants.items() %}
                 <tr class="bg-light">
-                    <td><a href={{ url_for('graphs.details', plant_id=item.plant_id) }}>{{ item.plant_id }}</a></td>
+                    <td>
+                        <a href={{ url_for('graphs.details', plant_data_id=plant_data_id) }}>
+                            {{ plant_type_name }}&nbsp;-&nbsp;{{ plant_data_id }}
+                        </a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -31,7 +35,7 @@ active
 </div>
 
 
-<div class="row mb-3 align-items-center">
+<div class="row mt-3">
     <div class="col">
         <h1>Measurements</h1>
     </div>
@@ -47,13 +51,16 @@ active
         </thead>
         <tbody>
             <tr class="bg-light">
-                <td><a href={{ url_for('graphs.humidity_graph') }}>Humidity</a></td>
+                <td><a href={{ url_for('graphs.humidity_graph', measurement='dht_humidity') }}>Air Humidity</a></td>
             </tr>
             <tr class="bg-light">
-                <td><a href={{ url_for('graphs.temperature_graph') }}>Temperature</a></td>
+                <td><a href={{ url_for('graphs.humidity_graph') }}>Terrain Humidity</a></td>
             </tr>
             <tr class="bg-light">
                 <td><a href={{ url_for('graphs.luminosity_graph') }}>Luminosity</a></td>
+            </tr>
+            <tr class="bg-light">
+                <td><a href={{ url_for('graphs.temperature_graph') }}>Temperature</a></td>
             </tr>
         </tbody>
     </table>
