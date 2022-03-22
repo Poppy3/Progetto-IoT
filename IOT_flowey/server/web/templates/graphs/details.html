@@ -3,31 +3,35 @@
 {% extends "base.html" %}
 
 
+{% set time_window = request.args.get('time_window', default='last_week') %}
+{% set show_predict = request.args.get('predict', default='false').lower() == 'true' %}
+
+
 {% block head_css %}
-<style>
-    .tooltip-inner {
-        min-width: 100px;
-        max-width: 100%;
-    }
-</style>
+    <style>
+        .tooltip-inner {
+            min-width: 100px;
+            max-width: 100%;
+        }
+    </style>
 {% endblock %}
 
 
 {% block head_js %}
-<script>
-    function switch_predict(el) {
-        /* set the value for 'predict' query param and reload the page */
-        const parser = new URL(window.location);
-        parser.searchParams.set('predict', el.checked);
-        window.location = parser.href;
-    }
+    <script>
+        function switch_predict(el) {
+            /* set the value for 'predict' query param and reload the page */
+            const parser = new URL(window.location);
+            parser.searchParams.set('predict', el.checked);
+            window.location = parser.href;
+        }
 
 
-    $(function () {
-        /* initialize tooltips on the page */
-        $('[data-toggle="tooltip"]').tooltip();
-    })
-</script>
+        $(function () {
+            /* initialize tooltips on the page */
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+    </script>
 {% endblock %}
 
 
@@ -38,13 +42,10 @@
 
 
 {% block content %}
-    {% set time_window = request.args.get('time_window', default='last_week') %}
-    {% set show_predict = request.args.get('predict', default='false').lower() == 'true' %}
-
     <div class="row my-3 align-items-center">
         <div class="col">
             <h1>
-                Graphs for {{ plant_type.name }}&nbsp;-&nbsp;
+                Graphs for {{ plant_type.name }} -
                 <span style="text-decoration: lightgrey dotted underline;"
                       data-toggle="tooltip" data-placement="bottom" title="UUID: {{ plant_info.plant_id }}"
                 >
@@ -55,7 +56,7 @@
         <div class="col-auto">
             <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="predict_switch" onchange="switch_predict(this)"
-                    {% if show_predict %}checked="checked"{% endif %}
+                       {% if show_predict %}checked="checked"{% endif %}
                 >
                 <label class="custom-control-label" for="predict_switch">Show Predictions</label>
             </div>
@@ -94,43 +95,51 @@
             <h4>Plant Info</h4>
         </div>
         <div class="col">
-            Plant type:
+            <b>Plant type:</b>
             <a href="{{ url_for('plant_type.details', plant_type_id=plant_type.id) }}">
                 {{ plant_type.name }}&nbsp;(Details)
             </a>
         </div>
         <div class="col-auto">
-            Plant UUID: {{ plant_info.plant_id }}
+            <b>Plant UUID:</b> {{ plant_info.plant_id }}
         </div>
         <div class="col">
-            Gateway id: {{ plant_info.gateway_id }}
+            <b>Gateway ID:</b> {{ plant_info.gateway_id }}
         </div>
         <div class="col">
-            Bridge id: {{ plant_info.bridge_id }}
+            <b>Bridge ID:</b> {{ plant_info.bridge_id }}
         </div>
     </div>
 
-
-    <h4>Terrain humidity</h4>
-    <canvas id="humidity" width="1000" height="400"></canvas>
-    {{ render_graph('humidity', chart_data['humidity']) }}
-
+    <div class="row">
+        <div class="col">
+            <h4><a href={{ url_for('graphs.measurement', measure='dht_humidity') }}>Air Humidity</a></h4>
+            <canvas id="dht_humidity" width="1000" height="400"></canvas>
+            {{ render_graph('dht_humidity', chart_data['dht_humidity']) }}
+        </div>
+    </div>
     <hr class="my-4"/>
-
-    <h4>Air humidity</h4>
-    <canvas id="dht_humidity" width="1000" height="400"></canvas>
-    {{ render_graph('dht_humidity', chart_data['dht_humidity']) }}
-
+    <div class="row">
+        <div class="col">
+            <h4><a href={{ url_for('graphs.measurement', measure='humidity') }}>Terrain Humidity</a></h4>
+            <canvas id="humidity" width="1000" height="400"></canvas>
+            {{ render_graph('humidity', chart_data['humidity']) }}
+        </div>
+    </div>
     <hr class="my-4"/>
-
-    <h4>Luminosity</h4>
-    <canvas id="luminosity" width="1000" height="400"></canvas>
-    {{ render_graph('luminosity', chart_data['luminosity']) }}
-
+    <div class="row">
+        <div class="col">
+            <h4><a href={{ url_for('graphs.measurement', measure='luminosity') }}>Luminosity</a></h4>
+            <canvas id="luminosity" width="1000" height="400"></canvas>
+            {{ render_graph('luminosity', chart_data['luminosity']) }}
+        </div>
+    </div>
     <hr class="my-4"/>
-
-    <h4>Air Temperature</h4>
-    <canvas id="temperature" width="1000" height="400"></canvas>
-    {{ render_graph('temperature', chart_data['temperature']) }}
-
+    <div class="row">
+        <div class="col">
+            <h4><a href={{ url_for('graphs.measurement', measure='temperature') }}>Temperature</a></h4>
+            <canvas id="temperature" width="1000" height="400"></canvas>
+            {{ render_graph('temperature', chart_data['temperature']) }}
+        </div>
+    </div>
 {% endblock %}

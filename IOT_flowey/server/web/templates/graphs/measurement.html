@@ -1,0 +1,108 @@
+{% from "macros/_render_graph.html" import render_graph with context %}
+
+{% extends "base.html" %}
+
+
+{% set time_window = request.args.get('time_window', default='last_week') %}
+{% set show_predict = request.args.get('predict', default='false').lower() == 'true' %}
+
+
+{% block head_js %}
+<script>
+    function switch_predict(el) {
+        /* set the value for 'predict' query param and reload the page */
+        const parser = new URL(window.location);
+        parser.searchParams.set('predict', el.checked);
+        window.location = parser.href;
+    }
+</script>
+{% endblock %}
+
+
+{# puts the .active class into base.html navbar link #}
+{% block active_navlink__graphs %}
+    active
+{% endblock %}
+
+
+{% block content %}
+        <div class="row my-3 align-items-center">
+        <div class="col">
+            <h1>{{ title }}</h1>
+        </div>
+        <div class="col-auto">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="predict_switch" onchange="switch_predict(this)"
+                    {% if show_predict %}checked="checked"{% endif %}
+                >
+                <label class="custom-control-label" for="predict_switch">Show Predictions</label>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs nav-fill">
+        <li class="nav-item">
+            <a class="nav-link {% if time_window not in ['last_month', 'all_time'] %}active{% endif %}"
+               href="{{ url_for('graphs.measurement',
+                                measure=measure,
+                                time_window='last_week',
+                                predict=show_predict|lower) }}"
+            >Last Week</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if time_window == 'last_month' %}active{% endif %}"
+               href="{{ url_for('graphs.measurement',
+                                measure=measure,
+                                time_window='last_month',
+                                predict=show_predict|lower) }}"
+            >Last Month</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if time_window == 'all_time' %}active{% endif %}"
+               href="{{ url_for('graphs.measurement',
+                                measure=measure,
+                                time_window='all_time',
+                                predict=show_predict|lower) }}"
+            >All Time</a>
+        </li>
+    </ul>
+
+    <div class="row mt-4">
+        <div class="col">
+            <h4>{{ chart_title }}</h4>
+            <canvas id="{{ measure }}" width="1000" height="400"></canvas>
+            {{ render_graph(measure, chart_data[measure]) }}
+        </div>
+    </div>
+
+    <hr class="my-4"/>
+
+    <div class="row">
+        <div class="col">
+            <h1>Plants</h1>
+        </div>
+    </div>
+
+<div class="table-responsive collapsable">
+    <table class="table">
+        <caption>List of registered plants</caption>
+        <thead class="thead-light thead-double">
+        <tr>
+            <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for plant_data_id, label in plants.items() %}
+                <tr class="bg-light">
+                    <td>
+                        <a href={{ url_for('graphs.details', plant_data_id=plant_data_id) }}>
+                            {{ label }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

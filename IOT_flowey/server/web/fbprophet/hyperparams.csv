@@ -3,3 +3,7 @@ plant_data_id,measurement,hyperparams
 43c311e2279f4dd2afce8bbcff62371d,humidity,"{""changepoint_prior_scale"": 0.001, ""changepoint_range"": 0.9, ""seasonality_prior_scale"": 0.5, ""seasonality_mode"": ""additive""}"
 43c311e2279f4dd2afce8bbcff62371d,temperature,"{""changepoint_prior_scale"": 0.001, ""changepoint_range"": 0.9, ""seasonality_prior_scale"": 0.5, ""seasonality_mode"": ""additive""}"
 43c311e2279f4dd2afce8bbcff62371d,dht_humidity,"{""changepoint_prior_scale"": 0.001, ""changepoint_range"": 0.9, ""seasonality_prior_scale"": 0.5, ""seasonality_mode"": ""additive""}"
+PLANT_ID,luminosity,"{""changepoint_prior_scale"": 0.001, ""changepoint_range"": 0.9, ""seasonality_prior_scale"": 0.5, ""seasonality_mode"": ""additive""}"
+PLANT_ID,humidity,"{""changepoint_prior_scale"": 0.001, ""changepoint_range"": 0.9, ""seasonality_prior_scale"": 0.5, ""seasonality_mode"": ""additive""}"
+PLANT_ID,temperature,"{""changepoint_prior_scale"": 0.001, ""changepoint_range"": 0.9, ""seasonality_prior_scale"": 0.5, ""seasonality_mode"": ""additive""}"
+PLANT_ID,dht_humidity,"{""changepoint_prior_scale"": 0.001, ""changepoint_range"": 0.9, ""seasonality_prior_scale"": 0.5, ""seasonality_mode"": ""additive""}"

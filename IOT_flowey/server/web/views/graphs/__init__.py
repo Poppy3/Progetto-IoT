@@ -13,8 +13,10 @@ def list_all():
     try:
         plant_data = PlantDataModel.query.distinct(PlantDataModel.plant_id).all()
 
-        # plants = dict of {plant_data_id: corresponding plant_type.name} entries
-        plants = {entry.gateway_id: (PlantTypeModel.query.get(entry.plant_type_id)).name for entry in plant_data}
+        plants = {
+            p.plant_id: f'{(PlantTypeModel.query.get(p.plant_type_id)).name} - {p.gateway_id}'
+            for p in plant_data
+        }
 
     except OperationalError:
         plants = None
@@ -212,8 +214,25 @@ def details(plant_data_id):
         abort(500)
 
 
-@graphs_bp.route('/humidity')
-def humidity_graph():
+@graphs_bp.route('/<measure>')
+def measurement(measure):
+    if measure == 'dht_humidity':
+        measure_title = 'Air humidity'
+        data_columns = ['dht_humidity']
+    elif measure == 'humidity':
+        measure_title = 'Terrain humidity'
+        data_columns = ['humidity_1', 'humidity_2', 'humidity_3']
+    elif measure == 'luminosity':
+        measure_title = 'Luminosity'
+        data_columns = ['luminosity_1', 'luminosity_2']
+    elif measure == 'temperature':
+        measure_title = 'Temperature'
+        data_columns = ['dht_temperature', 'temperature']
+    else:
+        abort(404)
+        measure_title = ''  # only here since the IDE complains otherwise
+        data_columns = []   # only here since the IDE complains otherwise
+
     try:
         time_window = request.args.get('time_window')
         if time_window not in ['all_time', 'last_month', 'last_week']:
@@ -221,6 +240,7 @@ def humidity_graph():
 
         show_predict = request.args.get('predict', default='false').lower() == 'true'
 
+        plants = {}
         df = pd.read_sql(sql=PlantDataModel.query
                          .order_by(PlantDataModel.creation_date).statement,
                          con=db.engine)
@@ -229,125 +249,74 @@ def humidity_graph():
 
         start_date = find_start_date(df, time_window)
 
-        df['humidity_median'] = df[['humidity_1', 'humidity_2', 'humidity_3']].median(axis=1)
+        if len(data_columns) == 3:
+            df['measure'] = df[data_columns].median(axis=1)
+        else:
+            df['measure'] = df[data_columns].mean(axis=1)
+
+        # todo remove
+        # df2 = df.copy()
+        # df2['gateway_id'] = 'GATEWAY_ID'
+        # df2['plant_id'] = 'PLANT_ID'
+        # df2['creation_date'] = df2['creation_date'] + pd.DateOffset(hours=3)
+        # df2['measure'] = df2['measure'].divide(1.1)
+        # df = pd.concat([df, df2], ignore_index=True)
+        # df = df.sort_values('creation_date')
+        # end todo remove
 
         df_filtered = filter_time_window(df, start_date, ds_col_name='creation_date').copy()
 
-        # todo remove
-        df2 = df_filtered.copy()
-        df2['plant_id'] = 'FAKE_ID'
-        #print(df2['creation_date'].head(4))
-        df2['creation_date'] = df2['creation_date'] + pd.DateOffset(hours=3)
-        #print(df2['creation_date'].head(4))
-        df2['humidity_median'] = df2['humidity_median'].divide(1.1)
-        df2['dht_humidity'] = df2['dht_humidity'].divide(1.1)
-        df_filtered = pd.concat([df_filtered, df2], ignore_index=True)
-        df_filtered = df_filtered.sort_values('creation_date')
-        # end todo remove
-
-        # TODO sistema la pagina
-        # TODO crea una nuova "measure" per dht_humidity separata da "humidity"
-        # todo -> così "single_measurement" va bene per mostrare un singolo grafico
-        # TODO Aggiungi la parte relativa al train-predict
-
         labels = df_filtered['creation_date']
 
-        for plant_id in df_filtered['plant_id'].unique():
-            row_index = df_filtered['plant_id'] == plant_id
-            df_filtered[f'humidity_{plant_id}'] = df_filtered.loc[row_index, 'humidity_median']
-            df_filtered[f'humidity_{plant_id}'].fillna(value='NaN', inplace=True)
-            df_filtered[f'dht_humidity_{plant_id}'] = df_filtered.loc[row_index, 'dht_humidity']
-            df_filtered[f'dht_humidity_{plant_id}'].fillna(value='NaN', inplace=True)
+        for _, row in df_filtered.groupby(['plant_id', 'gateway_id'], as_index=False).all().iterrows():
+            plant_id = row['plant_id']
+            gateway_id = row['gateway_id']
+
+            row_index = df_filtered['gateway_id'] == gateway_id
+            df_filtered[f'{measure}_{gateway_id}'] = df_filtered.loc[row_index, 'measure']
+            df_filtered[f'{measure}_{gateway_id}'].fillna(value='NaN', inplace=True)
+
+            plants[plant_id] = f'{(PlantTypeModel.query.get(row["plant_type_id"])).name} - {gateway_id}'
 
         chart_data = {
-            'dht_humidity': {
+            measure: {
                 'labels': labels,
                 'datasets': [
                     {
-                        'label': plant_id,
-                        'data': df_filtered[f'dht_humidity_{plant_id}'],
+                        'label': gateway_id,
+                        'data': df_filtered[f'{measure}_{gateway_id}'],
+                        'hidden': 'true' if show_predict else 'false',
                     }
-                    for plant_id in df_filtered['plant_id'].unique()
-                ],
-            },
-            'humidity': {
-                'labels': labels,
-                'datasets': [
-                    {
-                        'label': plant_id,
-                        'data': df_filtered[f'humidity_{plant_id}'],
-                    }
-                    for plant_id in df_filtered['plant_id'].unique()
+                    for gateway_id in df_filtered['gateway_id'].unique()
                 ],
             },
         }
 
-        return render_template('graphs/single_measurement.html',
-                               title='Humidity measures of all plants',
+        if show_predict:
+            for _, row in df_filtered.groupby(['plant_id', 'gateway_id'], as_index=False).all().iterrows():
+                plant_id = row['plant_id']
+                gateway_id = row['gateway_id']
+                try:
+                    prediction = predict(plant_id, measure)
+                except FileNotFoundError:
+                    prediction = fit_and_predict(plant_id,
+                                                 prepare_prophet_df(df, 'measure'),
+                                                 measure)
+
+                prediction = filter_time_window(prediction, start_date)
+                chart_data[measure]['labels'] = prediction['ds']
+                chart_data[measure]['datasets'].append({
+                    'label': f'Prediction {gateway_id}',
+                    'data': prediction['yhat'],
+                })
+
+        return render_template('graphs/measurement.html',
+                               title=f'{measure_title} graphs',
+                               chart_title=measure_title,
                                chart_data=chart_data,
-                               measure="Humidity")
+                               measure=measure,
+                               plants=plants,
+                               )
 
     except OperationalError:
         abort(500)
-
-
-
-
-@graphs_bp.route('/temperature')
-def temperature_graph():
-    try:
-        plant_measurements = PlantDataModel.query.order_by(PlantDataModel.creation_date).all()
-    except OperationalError:
-        plant_measurements = None
-
-    labels = []
-    data = []
-    plants = PlantDataModel.query.group_by(PlantDataModel.plant_id).all()
-
-    for item in plants:
-        data.append([item.plant_id, item.gateway_id, item.bridge_id, [], []])  # last 2 are dht temp, and normal temp
-
-    for plant_item in plant_measurements:
-        labels.append(plant_item.creation_date)
-        for data_item in data:
-            if data_item[0] == plant_item.plant_id:
-                data_item[3].append(plant_item.dht_temperature)
-                data_item[4].append(plant_item.temperature)
-            else:
-                data_item[3].append('null')
-                data_item[4].append('null')
-
-    return render_template('graphs/single_measurement.html',
-                           title='Temperature',
-                           labels=labels,
-                           data=data,
-                           measure="Temperature")
-
-
-@graphs_bp.route('/luminosity')
-def luminosity_graph():
-    try:
-        plant_measurements = PlantDataModel.query.order_by(PlantDataModel.creation_date).all()
-    except OperationalError:
-        plant_measurements = None
-
-    labels = []
-    data = []
-    plants = PlantDataModel.query.group_by(PlantDataModel.plant_id).all()
-
-    for item in plants:
-        data.append([item.plant_id, item.gateway_id, item.bridge_id, []])  # last is luminosity mean
-
-    for plant_item in plant_measurements:
-        labels.append(plant_item.creation_date)
-        for data_item in data:
-            if data_item[0] == plant_item.plant_id:
-                data_item[3].append((plant_item.luminosity_1 + plant_item.luminosity_2) / 2)
-            else:
-                data_item[3].append('null')
-
-    return render_template('graphs/single_measurement.html',
-                           title='Luminosity',
-                           labels=labels,
-                           data=data,
-                           measure="Luminosity")

@@ -21,11 +21,11 @@ active
         </tr>
         </thead>
         <tbody>
-            {% for plant_data_id, plant_type_name in plants.items() %}
+            {% for id, label in plants.items() %}
                 <tr class="bg-light">
                     <td>
-                        <a href={{ url_for('graphs.details', plant_data_id=plant_data_id) }}>
-                            {{ plant_type_name }}&nbsp;-&nbsp;{{ plant_data_id }}
+                        <a href={{ url_for('graphs.details', plant_data_id=id) }}>
+                            {{ label }}
                         </a>
                     </td>
                 </tr>
@@ -51,16 +51,16 @@ active
         </thead>
         <tbody>
             <tr class="bg-light">
-                <td><a href={{ url_for('graphs.humidity_graph', measurement='dht_humidity') }}>Air Humidity</a></td>
+                <td><a href={{ url_for('graphs.measurement', measure='dht_humidity') }}>Air Humidity</a></td>
             </tr>
             <tr class="bg-light">
-                <td><a href={{ url_for('graphs.humidity_graph') }}>Terrain Humidity</a></td>
+                <td><a href={{ url_for('graphs.measurement', measure='humidity') }}>Terrain Humidity</a></td>
             </tr>
             <tr class="bg-light">
-                <td><a href={{ url_for('graphs.luminosity_graph') }}>Luminosity</a></td>
+                <td><a href={{ url_for('graphs.measurement', measure='luminosity') }}>Luminosity</a></td>
             </tr>
             <tr class="bg-light">
-                <td><a href={{ url_for('graphs.temperature_graph') }}>Temperature</a></td>
+                <td><a href={{ url_for('graphs.measurement', measure='temperature') }}>Temperature</a></td>
             </tr>
         </tbody>
     </table>
