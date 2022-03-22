@@ -1,9 +1,9 @@
-from ...models import PlantTypeModel, PlantDataModel, db
-from .utils import prepare_prophet_df, fit_and_predict, filter_time_window, predict, find_start_date
+import pandas as pd
 from flask import Blueprint, render_template, abort, request
 from sqlalchemy.exc import OperationalError
-import pandas as pd
 
+from .utils import prepare_prophet_df, fit_and_predict, filter_time_window, predict, find_start_date
+from ...models import PlantTypeModel, PlantDataModel, db
 
 graphs_bp = Blueprint('graphs', __name__, url_prefix='/graphs')
 
@@ -209,7 +209,7 @@ def details(plant_data_id):
                                title=f'Graphs for {plant_type.name} - {plant_info.gateway_id}',
                                plant_type=plant_type,
                                plant_info=plant_info,
-                               chart_data=chart_data,)
+                               chart_data=chart_data, )
     except OperationalError:
         abort(500)
 
@@ -231,7 +231,7 @@ def measurement(measure):
     else:
         abort(404)
         measure_title = ''  # only here since the IDE complains otherwise
-        data_columns = []   # only here since the IDE complains otherwise
+        data_columns = []  # only here since the IDE complains otherwise
 
     try:
         time_window = request.args.get('time_window')

@@ -1,4 +1,3 @@
-from typing import Optional, Union
 import random
 
 
@@ -53,5 +52,3 @@ def get_random_color(alpha: bool = False) -> str:
         a = random.uniform(0, 1)
         return f'rgba({r}, {g}, {b}, {a})'
     return f'rgb({r}, {g}, {b})'
-
-

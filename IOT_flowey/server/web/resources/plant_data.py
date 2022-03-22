@@ -1,7 +1,7 @@
-from ..models.plant_data import PlantDataModel, db
-from ..models.plant_type import PlantTypeModel
 from flask import jsonify, make_response
 from flask_restful import Resource, reqparse, inputs
+
+from ..models import PlantDataModel, PlantTypeModel, db
 
 
 def base_parser():

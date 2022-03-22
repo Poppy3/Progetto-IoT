@@ -1,9 +1,11 @@
+import json
+from typing import Optional
+
+import pandas as pd
+from fbprophet import Prophet
+
 from ...config import FBPROPHET_PERIODS, FBPROPHET_FREQ, FBPROPHET_HYPERPARAMS_PATH, FBPROPHET_MODELS_PATH
 from ...fbprophet.utils import load_model, save_model
-from fbprophet import Prophet
-from typing import Optional
-import json
-import pandas as pd
 
 
 def predict(plant_data_id: str,

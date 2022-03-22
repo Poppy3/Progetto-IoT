@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template
 
-
 homepage_bp = Blueprint('homepage', __name__)
 
 

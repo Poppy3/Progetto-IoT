@@ -1,86 +1,88 @@
 {% extends "base.html" %}
 
+
 {# puts the .active class into base.html navbar link #}
 {% block active_navlink__plant_type %}
-active
+    active
 {% endblock %}
 
+
 {% block content %}
-<div class="row mb-3 align-items-center">
-    <div class="col">
-        <h1>{{ plant_type_model.name }}</h1>
+    <div class="row mb-3 align-items-center">
+        <div class="col">
+            <h1>{{ plant_type_model.name }}</h1>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-primary my-2" role="button"
+               href="{{ url_for('plant_type.edit', plant_type_id=plant_type_model.id) }}">
+                <span class="d-none d-md-inline">Edit </span><i class="bi bi-pencil-square"></i>
+            </a>
+        </div>
     </div>
-    <div class="col-auto">
-        <a class="btn btn-primary my-2" role="button"
-           href="{{ url_for('plant_type.edit', plant_type_id=plant_type_model.id) }}">
-            <span class="d-none d-md-inline">Edit </span><i class="bi bi-pencil-square"></i>
-        </a>
-    </div>
-</div>
 
-{% if plant_type_model.description|length %}
-<hr/>
-<div class="row">
-    <div class="col">
-        {{ plant_type_model.description }}
-    </div>
-</div>
-{% endif %}
+    {% if plant_type_model.description|length %}
+        <hr/>
+        <div class="row">
+            <div class="col">
+                {{ plant_type_model.description }}
+            </div>
+        </div>
+    {% endif %}
 
-<hr/>
-<div class="row">
-    <div class="col-12 col-md-3">
-        <p class="lead">Humidity</p>
+    <hr/>
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <p class="lead">Humidity</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <p>Minimum</p>
+            <p>{{ plant_type_model.humidity_min or '-' }}</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <p>Maximum</p>
+            <p>{{ plant_type_model.humidity_max or '-' }}</p>
+        </div>
+        <div class="col-12 col-md-3">
+            <p>Tolerance Time</p>
+            <p>{{ plant_type_model.humidity_tolerance or '-' }}</p>
+        </div>
     </div>
-    <div class="col-6 col-md-3">
-        <p>Minimum</p>
-        <p>{{ plant_type_model.humidity_min or '-' }}</p>
-    </div>
-    <div class="col-6 col-md-3">
-        <p>Maximum</p>
-        <p>{{ plant_type_model.humidity_max or '-' }}</p>
-    </div>
-    <div class="col-12 col-md-3">
-        <p>Tolerance Time</p>
-        <p>{{ plant_type_model.humidity_tolerance or '-' }}</p>
-    </div>
-</div>
 
-<hr/>
-<div class="row">
-    <div class="col-12 col-md-3">
-        <p class="lead">Luminosity</p>
+    <hr/>
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <p class="lead">Luminosity</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <p>Minimum</p>
+            <p>{{ plant_type_model.luminosity_min or '-' }}</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <p>Maximum</p>
+            <p>{{ plant_type_model.luminosity_max or '-' }}</p>
+        </div>
+        <div class="col-12 col-md-3">
+            <p>Tolerance Time</p>
+            <p>{{ plant_type_model.luminosity_tolerance or '-' }}</p>
+        </div>
     </div>
-    <div class="col-6 col-md-3">
-        <p>Minimum</p>
-        <p>{{ plant_type_model.luminosity_min or '-' }}</p>
-    </div>
-    <div class="col-6 col-md-3">
-        <p>Maximum</p>
-        <p>{{ plant_type_model.luminosity_max or '-' }}</p>
-    </div>
-    <div class="col-12 col-md-3">
-        <p>Tolerance Time</p>
-        <p>{{ plant_type_model.luminosity_tolerance or '-' }}</p>
-    </div>
-</div>
 
-<hr/>
-<div class="row">
-    <div class="col-12 col-md-3">
-        <p class="lead">Temperature</p>
+    <hr/>
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <p class="lead">Temperature</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <p>Minimum</p>
+            <p>{{ plant_type_model.temperature_min or '-' }}</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <p>Maximum</p>
+            <p>{{ plant_type_model.temperature_max or '-' }}</p>
+        </div>
+        <div class="col-12 col-md-3">
+            <p>Tolerance Time</p>
+            <p>{{ plant_type_model.temperature_tolerance or '-' }}</p>
+        </div>
     </div>
-    <div class="col-6 col-md-3">
-        <p>Minimum</p>
-        <p>{{ plant_type_model.temperature_min or '-' }}</p>
-    </div>
-    <div class="col-6 col-md-3">
-        <p>Maximum</p>
-        <p>{{ plant_type_model.temperature_max or '-' }}</p>
-    </div>
-    <div class="col-12 col-md-3">
-        <p>Tolerance Time</p>
-        <p>{{ plant_type_model.temperature_tolerance or '-' }}</p>
-    </div>
-</div>
 {% endblock %}

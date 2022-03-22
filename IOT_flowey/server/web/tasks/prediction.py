@@ -1,6 +1,6 @@
-"""Example of adding tasks on app startup."""
+"""DEVELOPMENT ONLY"""
 
-from ..extensions.scheduler import scheduler
+from ..extensions import scheduler
 
 
 @scheduler.task(

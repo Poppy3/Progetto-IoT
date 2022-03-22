@@ -3,19 +3,17 @@
 # gateway connector (=arduino) al bridge (=raspberry)
 ################################################################################
 
-# local
-from utils import debug, error
-import config as cfg
-
-# standard libraries
-from json import JSONDecodeError
-from pathlib import Path
-from requests import ConnectionError
 import argparse
 import json
-import requests
 import uuid
+from json import JSONDecodeError
+from pathlib import Path
 
+import requests
+from requests import ConnectionError
+
+import config as cfg
+from utils import debug, error
 
 parser = argparse.ArgumentParser(description='Register a new gateway connection or remove an existing one')
 group = parser.add_mutually_exclusive_group(required=True)

@@ -14,9 +14,9 @@ static const int ledRPin = 11;
 static const int ledGPin = 10;
 static const int ledBPin = 9;
 
-static const unsigned long DELAY_TIME = 600000; // 10 minutes in milliseconds
+static const unsigned long DELAY_TIME = 600000;  // 10 minutes in milliseconds
 
-static const String device_id = "ARDUINO001";
+static const String device_id = "ARDUINO001";  // each Gateway will have a unique device_id
 
 DHT_nonblocking dht_sensor(dhtDataPin, DHT_SENSOR_TYPE);
 
@@ -86,6 +86,7 @@ void color_led(int r, int g, int b)
   analogWrite(ledGPin, g);
   analogWrite(ledBPin, b);
 }
+
 
 void manage_led()
 {
@@ -160,5 +161,4 @@ void loop() {
 
   /*** manage rgb led ***/
   manage_led();
-  
 }

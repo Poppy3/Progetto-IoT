@@ -1,9 +1,12 @@
-from ..models import PlantDataModel, db
-from fbprophet import Prophet
-from fbprophet.diagnostics import cross_validation
-from fbprophet.diagnostics import performance_metrics
+"""DEVELOPMENT ONLY"""
+
 import itertools
+
 import pandas as pd
+from fbprophet import Prophet
+from fbprophet.diagnostics import cross_validation, performance_metrics
+
+from ..models import PlantDataModel, db
 
 
 def create_param_combinations(**param_dict):
@@ -46,32 +49,32 @@ def store_best_param(df: pd.DataFrame, result_filename: str, param_grid: dict):
 
 def start(plant_data_id: str = '43c311e2279f4dd2afce8bbcff62371d', measurement: str = 'humidity'):
     param_grid = {
-                'changepoint_prior_scale': [
-                    0.001,
-                    0.005,
-                    0.05,
-                    # 0.5,
-                    # 5,
-                ],
-                'changepoint_range': [
-                    0.8,
-                    # 0.85,
-                    0.9,
-                ],
-                'seasonality_prior_scale': [
-                    0.1,
-                    0.5,
-                    1,
-                    # 10.0
-                ],
-                'seasonality_mode': [
-                    # 'multiplicative',
-                    'additive'
-                ],
-                # 'holidays_prior_scale': [0.1, 1, 10.0, ],
-                # 'growth': ['linear', 'logistic'],
-                # 'yearly_seasonality': [5, 10, 20, ]
-              }
+        'changepoint_prior_scale': [
+            0.001,
+            0.005,
+            0.05,
+            # 0.5,
+            # 5,
+        ],
+        'changepoint_range': [
+            0.8,
+            # 0.85,
+            0.9,
+        ],
+        'seasonality_prior_scale': [
+            0.1,
+            0.5,
+            1,
+            # 10.0
+        ],
+        'seasonality_mode': [
+            # 'multiplicative',
+            'additive'
+        ],
+        # 'holidays_prior_scale': [0.1, 1, 10.0, ],
+        # 'growth': ['linear', 'logistic'],
+        # 'yearly_seasonality': [5, 10, 20, ]
+    }
 
     df = pd.read_sql(sql=PlantDataModel.query.filter_by(plant_id=plant_data_id)
                      .order_by(PlantDataModel.creation_date).statement,

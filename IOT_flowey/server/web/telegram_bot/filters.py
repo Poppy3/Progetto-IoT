@@ -1,8 +1,9 @@
+import re
+
 from flask_sqlalchemy import Model
 from sqlalchemy import Column
 from telegram import Message
 from telegram.ext import MessageFilter
-import re
 
 
 class FilterOnModelColumn(MessageFilter):

@@ -28,12 +28,12 @@
     {% elif field.type in ['TextAreaField'] %}
         <div class="col">
             <textarea
-                   class="form-control {% if field.errors|length > 0 %}is-invalid{% endif %}"
-                   id="{{ field.id }}"
-                   name="{{ field.name }}"
-                   placeholder="{{ field.label.text }}{% if field.flags.required %}*{% endif %}"
-                   aria-describedby="{{ field.id }}--help {{ field.id }}--feedback"
-                   {% if field.flags.required %}required{% endif %}
+                    class="form-control {% if field.errors|length > 0 %}is-invalid{% endif %}"
+                    id="{{ field.id }}"
+                    name="{{ field.name }}"
+                    placeholder="{{ field.label.text }}{% if field.flags.required %}*{% endif %}"
+                    aria-describedby="{{ field.id }}--help {{ field.id }}--feedback"
+                    {% if field.flags.required %}required{% endif %}
             >{{ field.data if field.data }}</textarea>
             <div class="invalid-feedback" id="{{ field.id }}--feedback">
                 {% for error in field.errors %}
@@ -45,25 +45,26 @@
         <small id="{{ field.id }}--help" class="form-text text-muted col offset-sm-3">
             {{ field.description }}
         </small>
-        {% else %}
-            <div class="col-sm-4">
-                <input type="text"
-                       class="form-control {% if field.errors|length > 0 %}is-invalid{% endif %}"
-                       id="{{ field.id }}"
-                       name="{{ field.name }}"
-                       placeholder="{{ field.label.text }}{% if field.flags.required %}*{% endif %}"
-                       value="{{ field.data if field.data }}"
-                       aria-describedby="{{ field.id }}--help {{ field.id }}--feedback"
-                       {% if field.flags.required %}required{% endif %}
-                />
-                <div class="invalid-feedback" id="{{ field.id }}--feedback">
-                    {% for error in field.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
+    {% else %}
+        <div class="col-sm-4">
+            <input type="text"
+                   class="form-control {% if field.errors|length > 0 %}is-invalid{% endif %}"
+                   id="{{ field.id }}"
+                   name="{{ field.name }}"
+                   placeholder="{{ field.label.text }}{% if field.flags.required %}*{% endif %}"
+                   value="{{ field.data if field.data }}"
+                   aria-describedby="{{ field.id }}--help {{ field.id }}--feedback"
+                   {% if field.flags.required %}required{% endif %}
+            />
+            <div class="invalid-feedback" id="{{ field.id }}--feedback">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
             </div>
-            <small id="{{ field.id }}--help" class="form-text text-muted col-sm-5">
-                {{ field.description }}
-            </small>
-        {% endif %}
+        </div>
+        <small id="{{ field.id }}--help" class="form-text text-muted col-sm-5">
+            {{ field.description }}
+        </small>
+    {% endif %}
+
 {% endmacro %}

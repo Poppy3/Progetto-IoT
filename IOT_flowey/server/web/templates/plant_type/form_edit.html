@@ -1,48 +1,50 @@
 {% extends "plant_type/form.html" %}
 
+
 {% block plant_type_form_title %}
-<div class="row align-items-center">
-    <div class="col">
-        <h2>Edit {{ plant_type_model.name }}</h2>
+    <div class="row align-items-center">
+        <div class="col">
+            <h2>Edit {{ plant_type_model.name }}</h2>
+        </div>
+        <div class="col-auto">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#plant_type-deleteModal">
+                <span class="d-none d-md-inline">Delete </span><i class="bi bi-trash"></i>
+            </button>
+        </div>
     </div>
-    <div class="col-auto">
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#plant_type-deleteModal">
-          <span class="d-none d-md-inline">Delete </span><i class="bi bi-trash"></i>
-        </button>
+    <div class="row">
+        <div class="col">
+            <p class="lead">
+                Modify the existing Plant-Type with ideal values that will be used to check your plants' health.
+            </p>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col">
-        <p class="lead">
-            Modify the existing Plant-Type with ideal values that will be used to check your plants' health.
-        </p>
-    </div>
-</div>
 {% endblock %}
 
 {% block modal %}
-<!-- Modal -->
-<div class="modal fade" id="plant_type-deleteModal" tabindex="-1" aria-labelledby="plant_type-deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="plant_type-deleteModalLabel">Please, confirm</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p class="text-danger">Delete action is <span class="font-weight-bold">not</span> reversible.</p>
-                <p>Do you confirm to proceed with the elimination of {{ plant_type_model.name }}?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No, Close</button>
-                <a role="button" class="btn btn-outline-danger"
-                   href="{{ url_for('plant_type.delete', plant_type_id=plant_type_model.id) }}"
-                >Yes, Delete</a>
+    <!-- Modal -->
+    <div class="modal fade" id="plant_type-deleteModal" tabindex="-1" aria-labelledby="plant_type-deleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="plant_type-deleteModalLabel">Please, confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger">Delete action is <span class="font-weight-bold">not</span> reversible.</p>
+                    <p>Do you confirm to proceed with the elimination of {{ plant_type_model.name }}?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No, Close</button>
+                    <a role="button" class="btn btn-outline-danger"
+                       href="{{ url_for('plant_type.delete', plant_type_id=plant_type_model.id) }}"
+                    >Yes, Delete</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

@@ -1,6 +1,7 @@
-from ..models.plant_type import PlantTypeModel
 from flask import jsonify
 from flask_restful import Resource
+
+from ..models import PlantTypeModel
 
 
 class PlantTypeAPI(Resource):

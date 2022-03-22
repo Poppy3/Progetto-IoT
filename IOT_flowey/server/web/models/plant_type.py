@@ -1,7 +1,5 @@
-from ..extensions.sqlalchemy import db
-from ..models.plant_data import PlantDataModel
+from ..extensions import db
 from dataclasses import dataclass
-from sqlalchemy.orm import validates
 from datetime import datetime
 
 
@@ -25,9 +23,4 @@ class PlantTypeModel(db.Model):
     temperature_tolerance_time: int = db.Column(db.Integer)
 
     plant_data = db.relationship('PlantDataModel',
-                                 # backref='plant_type',
                                  lazy=True)
-
-    # @validates('name')
-    # def convert_lower(self, key, value):
-    #     return value.lower()

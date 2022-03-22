@@ -3,25 +3,24 @@
 #
 ################################################################################
 
-# local
-from gateway_connector import GatewayConnector
-from server_connector import ServerConnector
-from telegram_bot import send_admin_message
-from utils import compose_filename, purge_filename, debug, error, info, warning, GracefulInterruptHandler
-import config as cfg
-
-# standard libraries
-from json import JSONDecodeError
-from pathlib import Path
-from requests import ConnectionError
-from serial import SerialException
-from telegram import TelegramError
 import datetime
 import json
 import multiprocessing as mp
 import os
 import signal
 import time
+from json import JSONDecodeError
+from pathlib import Path
+
+from requests import ConnectionError
+from serial import SerialException
+from telegram import TelegramError
+
+import config as cfg
+from gateway_connector import GatewayConnector
+from server_connector import ServerConnector
+from telegram_bot import send_admin_message
+from utils import compose_filename, purge_filename, debug, error, info, warning, GracefulInterruptHandler
 
 
 def cleanup(exit_val=0):

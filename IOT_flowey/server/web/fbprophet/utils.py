@@ -1,9 +1,11 @@
-from ..config import FBPROPHET_HYPERPARAMS_PATH, FBPROPHET_MODELS_PATH
+import json
+from typing import Optional
+
+import pandas as pd
 from fbprophet import Prophet
 from fbprophet.serialize import model_from_json, model_to_json
-from typing import Optional
-import json
-import pandas as pd
+
+from ..config import FBPROPHET_HYPERPARAMS_PATH, FBPROPHET_MODELS_PATH
 
 
 def load_model(plant_data_id: str, measurement: str, path: str = FBPROPHET_MODELS_PATH) -> Optional[Prophet]:
@@ -54,21 +56,3 @@ def save_hyperparams(plant_data_id: str, measurement: str, hyperparams: dict, pa
     except FileNotFoundError:
         df = pd.DataFrame([new_row], columns=['plant_data_id', 'measurement', 'hyperparams'])
         df.to_csv(path, index=False)
-
-
-def main__save_hyperparams():
-    """ FOR TEST ONLY """
-    plant_data_id = '43c311e2279f4dd2afce8bbcff62371d'
-    measurement = 'luminosity'
-    hyperparams = {
-        'changepoint_prior_scale': 0.001,
-        'changepoint_range': 0.9,
-        'seasonality_prior_scale': 0.5,
-        'seasonality_mode': 'additive',
-    }
-    save_hyperparams(plant_data_id, measurement, hyperparams, 'hyperparams.csv')
-
-
-if __name__ == '__main__':
-    main__save_hyperparams()
-

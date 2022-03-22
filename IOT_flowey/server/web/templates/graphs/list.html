@@ -1,26 +1,28 @@
 {% extends "base.html" %}
 
+
 {# puts the .active class into base.html navbar link #}
 {% block active_navlink__graphs %}
-active
+    active
 {% endblock %}
 
-{% block content %}
-<div class="row">
-    <div class="col">
-        <h1>Plants</h1>
-    </div>
-</div>
 
-<div class="table-responsive collapsable">
-    <table class="table">
-        <caption>List of registered plants</caption>
-        <thead class="thead-light thead-double">
-        <tr>
-            <th scope="col">Name</th>
-        </tr>
-        </thead>
-        <tbody>
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h1>Plants</h1>
+        </div>
+    </div>
+
+    <div class="table-responsive collapsable">
+        <table class="table">
+            <caption>List of registered plants</caption>
+            <thead class="thead-light thead-double">
+            <tr>
+                <th scope="col">Name</th>
+            </tr>
+            </thead>
+            <tbody>
             {% for id, label in plants.items() %}
                 <tr class="bg-light">
                     <td>
@@ -30,26 +32,25 @@ active
                     </td>
                 </tr>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
-<div class="row mt-3">
-    <div class="col">
-        <h1>Measurements</h1>
+            </tbody>
+        </table>
     </div>
-</div>
 
-<div class="table-responsive collapsable">
-    <table class="table">
-        <caption>List of measurements sampled</caption>
-        <thead class="thead-light thead-double">
-        <tr>
-            <th scope="col">Name</th>
-        </tr>
-        </thead>
-        <tbody>
+    <div class="row mt-3">
+        <div class="col">
+            <h1>Measurements</h1>
+        </div>
+    </div>
+
+    <div class="table-responsive collapsable">
+        <table class="table">
+            <caption>List of measurements sampled</caption>
+            <thead class="thead-light thead-double">
+            <tr>
+                <th scope="col">Name</th>
+            </tr>
+            </thead>
+            <tbody>
             <tr class="bg-light">
                 <td><a href={{ url_for('graphs.measurement', measure='dht_humidity') }}>Air Humidity</a></td>
             </tr>
@@ -62,8 +63,8 @@ active
             <tr class="bg-light">
                 <td><a href={{ url_for('graphs.measurement', measure='temperature') }}>Temperature</a></td>
             </tr>
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}

@@ -1,5 +1,6 @@
-import config as cfg
 from telegram import Bot
+
+import config as cfg
 
 
 bot = Bot(token=cfg.TELEGRAM_BOT.API_KEY)

@@ -23,6 +23,7 @@ class SERVER_CONNECTOR:
     PORT = None
     LOCAL_MODE = False
     LOCAL_FILENAME = 'local_plant_data.txt'
+
     class ENDPOINTS:
         PLANT_DATA = '/api/v1/plant_data'
         PLANT_TYPE = '/api/v1/plant_type'
@@ -30,7 +31,7 @@ class SERVER_CONNECTOR:
 
 class TELEGRAM_BOT:
     ADMIN_CHAT_ID = '353051365'
-    API_KEY ='1744886816:AAF4Xz6dNJmfgooDUK0c_7E9zLo4pES-I1A'
+    API_KEY = '1744886816:AAF4Xz6dNJmfgooDUK0c_7E9zLo4pES-I1A'
 
 
 class UNSENT_DATA:

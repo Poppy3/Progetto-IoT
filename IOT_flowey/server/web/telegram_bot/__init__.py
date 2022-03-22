@@ -1,12 +1,9 @@
-from .dispatch_handlers import (
-    Start,
-    Help,
-    Echo,
-    PlantStatusConversation,
-)
+from typing import Optional
+
 from telegram import Bot
 from telegram.ext import Dispatcher, Handler
-from typing import Optional
+
+from .dispatch_handlers import Start, Help, PlantStatusConversation
 
 
 class TelegramBot:
@@ -18,7 +15,6 @@ class TelegramBot:
         self._dispatcher = Dispatcher(self._bot, None, workers=0)
         self._dispatcher.add_handler(Start.handler)
         self._dispatcher.add_handler(Help.handler)
-        # self._dispatcher.add_handler(Echo.handler)
         self._dispatcher.add_handler(PlantStatusConversation.handler)
 
     @property

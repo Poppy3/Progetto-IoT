@@ -1,6 +1,8 @@
-from ..scripts import find_prophet_hyperparams as find_hyperparams
-from flask import Blueprint, render_template, request
+"""DEVELOPMENT ONLY"""
 
+from flask import Blueprint, request
+
+from ..scripts import find_prophet_hyperparams as find_hyperparams
 
 dev_bp = Blueprint('dev', __name__, url_prefix='/dev/scripts')
 

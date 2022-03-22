@@ -8,14 +8,14 @@
 
 
 {% block head_js %}
-<script>
-    function switch_predict(el) {
-        /* set the value for 'predict' query param and reload the page */
-        const parser = new URL(window.location);
-        parser.searchParams.set('predict', el.checked);
-        window.location = parser.href;
-    }
-</script>
+    <script>
+        function switch_predict(el) {
+            /* set the value for 'predict' query param and reload the page */
+            const parser = new URL(window.location);
+            parser.searchParams.set('predict', el.checked);
+            window.location = parser.href;
+        }
+    </script>
 {% endblock %}
 
 
@@ -26,14 +26,14 @@
 
 
 {% block content %}
-        <div class="row my-3 align-items-center">
+    <div class="row my-3 align-items-center">
         <div class="col">
             <h1>{{ title }}</h1>
         </div>
         <div class="col-auto">
             <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="predict_switch" onchange="switch_predict(this)"
-                    {% if show_predict %}checked="checked"{% endif %}
+                       {% if show_predict %}checked="checked"{% endif %}
                 >
                 <label class="custom-control-label" for="predict_switch">Show Predictions</label>
             </div>
@@ -83,15 +83,15 @@
         </div>
     </div>
 
-<div class="table-responsive collapsable">
-    <table class="table">
-        <caption>List of registered plants</caption>
-        <thead class="thead-light thead-double">
-        <tr>
-            <th scope="col">Name</th>
-        </tr>
-        </thead>
-        <tbody>
+    <div class="table-responsive collapsable">
+        <table class="table">
+            <caption>List of registered plants</caption>
+            <thead class="thead-light thead-double">
+            <tr>
+                <th scope="col">Name</th>
+            </tr>
+            </thead>
+            <tbody>
             {% for plant_data_id, label in plants.items() %}
                 <tr class="bg-light">
                     <td>
@@ -101,8 +101,8 @@
                     </td>
                 </tr>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}

@@ -13,3 +13,6 @@ _COM3/
 /IOT_flowey/bridge/main.log
 /IOT_flowey/bridge/unsent_data_worker-COM3.log
 /IOT_flowey/server/.ipynb_checkpoints/
+/IOT_flowey/server/result_humidity_43c311e2279f4dd2afce8bbcff62371d.csv
+/IOT_flowey/server/web/dev.sqlite3.bck
+/IOT_flowey/server/web/flowey_dev.sqlite3.bck

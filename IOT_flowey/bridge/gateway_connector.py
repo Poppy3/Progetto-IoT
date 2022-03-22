@@ -3,14 +3,13 @@
 # Mette a disposizione delle funzioni per leggere/scrivere da/verso il gateway
 ################################################################################
 
-# local
-import config as cfg
-from utils import debug, error, warning
-
-# standard libraries
-from serial import Serial, SerialException
 import json
 import time
+
+from serial import Serial, SerialException
+
+import config as cfg
+from utils import debug, error, warning
 
 
 class GatewayConnector:
@@ -68,7 +67,6 @@ class GatewayConnector:
         }
         """
         debug('GatewayConnector.readline() - called readline', 2, path=self._log_path)
-        # TODO - dopo aver collegato l'arduino, si può rimuovere questo blocco
         if self._local_mode:
             return self._readline_local()
 

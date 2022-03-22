@@ -1,7 +1,7 @@
-from ..extensions.telegram_bot import telegram_bot
 from flask import Blueprint, request, Response
 from telegram import Update
 
+from ..extensions import telegram_bot
 
 telegram_bot_bp = Blueprint('telegram_bot', __name__, url_prefix='/telegram_bot')
 

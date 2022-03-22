@@ -2,12 +2,10 @@
 # Collection of utility functions used in other scripts
 ################################################################################
 
-# local
-import config as cfg
-
-# standard libraries
 import datetime
 import signal
+
+import config as cfg
 
 
 def log(message, prefix, path=None):

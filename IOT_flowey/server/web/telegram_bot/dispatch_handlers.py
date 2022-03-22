@@ -1,9 +1,7 @@
-from .utils import get_keyboard_layout, escape_markdown_V2, get_plant_data_report
-from .filters import FilterOnModelColumn
-from ..models.plant_data import PlantDataModel
-from ..models.plant_type import PlantTypeModel
+import re
 from abc import ABC, abstractmethod
 from itertools import chain
+
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
     BaseFilter,
@@ -15,7 +13,9 @@ from telegram.ext import (
     MessageHandler,
 )
 
-import re
+from .filters import FilterOnModelColumn
+from .utils import get_keyboard_layout, escape_markdown_V2, get_plant_data_report
+from ..models import PlantDataModel, PlantTypeModel
 
 
 class AbstractHandler(ABC):
@@ -101,7 +101,6 @@ class EchoCLS(AbstractMessageHandler):
 
 
 class PlantStatusCLS(AbstractHandler):
-
     REGEX = r'^(?P<name>\w+)\s*\((?P<gateway>\w+)\)$'
 
     class States:
@@ -112,8 +111,10 @@ class PlantStatusCLS(AbstractHandler):
     class Callbacks:
         @staticmethod
         def start(update: Update, _: CallbackContext) -> int:
-            """Send a message when the command /status is issued.
-            Start step of a multi-step conversation"""
+            """
+            Send a message when the command /status is issued.
+            Start step of a multi-step conversation
+            """
             query_results = (PlantDataModel.query
                              .with_entities(PlantDataModel.bridge_id)
                              .distinct()
@@ -141,10 +142,8 @@ class PlantStatusCLS(AbstractHandler):
             keys = [f'{name} ({gtw_id})' for (gtw_id, name) in query_results]
             reply_keyboard = get_keyboard_layout(keys)
 
-            # TODO prendi le piante dal model, e stampa un report sommario
             update.message.reply_markdown_v2(
                 f'You selected the group "{escape_markdown_V2(bridge_selected)}"\.\n\n'
-                # f'<Qui mostro il report sommario delle piante del bridge selezionato\>\n\n'
                 f'Please select the plant you want to check the status of, '
                 f'or reply with /cancel to end the conversation\.',
                 reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
@@ -180,7 +179,6 @@ class PlantStatusCLS(AbstractHandler):
 
             report = get_plant_data_report(gateway_id, plant_name)
 
-            # TODO prendi le piante dal model, e stampa un report specifico
             update.message.reply_markdown_v2(
                 f'You selected the plant "{escape_markdown_V2(plant_selected)}"\.\n\n'
                 f'{report}\n\n'

@@ -10,18 +10,19 @@ class LOGGING:
 
 
 class GATEWAY_CONNECTOR:
-    LOCAL_MODE = True  # TODO - impostare a False per la comunicazione con arduino
+    LOCAL_MODE = True  # Set to False to enable communication with a real Gateway
     READ_MAX_TRIES = 10
     READ_INTERVAL_TIME = 5.0  # seconds
     TIMEOUT = None  # seconds
 
 
 class SERVER_CONNECTOR:
-    PROTOCOL = 'http://'  # TODO - da impostare con quello dato da ngrok
-    HOST = '127.0.0.1'  # TODO - da impostare con quello dato da ngrok
-    PORT = '8080'  # TODO - da impostare con quello dato da ngrok
-    LOCAL_MODE = False  # TODO - impostare a False per la comunicazione con ngrok
+    PROTOCOL = 'http://'
+    HOST = '127.0.0.1'
+    PORT = '8080'
+    LOCAL_MODE = True  # Set to False to enable communication with a real Datacenter
     LOCAL_FILENAME = 'local_plant_data.txt'
+
     class ENDPOINTS:
         PLANT_DATA = '/api/v1/plant_data'
         PLANT_TYPE = '/api/v1/plant_type'
@@ -29,7 +30,7 @@ class SERVER_CONNECTOR:
 
 class TELEGRAM_BOT:
     ADMIN_CHAT_ID = '353051365'
-    API_KEY ='1744886816:AAF4Xz6dNJmfgooDUK0c_7E9zLo4pES-I1A'
+    API_KEY = '1744886816:AAF4Xz6dNJmfgooDUK0c_7E9zLo4pES-I1A'
 
 
 class UNSENT_DATA:

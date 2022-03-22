@@ -1,71 +1,70 @@
 {% macro render_graph(chart_id, chart_data) %}
+    <script>
+        // ----- start chart_{{ chart_id }}  ------
+        let chartData_{{ chart_id }} = {
+            labels: [{% for item in chart_data.labels %}
+                '{{item}}',
+            {% endfor %}],
+            datasets: [{% for dataset in chart_data.datasets %}
+                {
+                    borderColor: '{{ dataset.color or get_random_color() }}',
+                    borderWidth: 1.5,
+                    fill: false,
+                    label: '{{ dataset.label }}',
+                    spanGaps: true,
+                    tension: 0.1,
+                    hidden: {{ dataset.hidden or 'false' }},
+                    data: [{% for item in dataset.data %}
+                        {{ item|safe }},
+                    {% endfor %}],
+                },
+            {% endfor %}],
+        }
 
-<script>
-    // ----- start chart_{{ chart_id }}  ------
-    let chartData_{{ chart_id }} = {
-        labels: [{% for item in chart_data.labels %}
-            '{{item}}',
-        {% endfor %}],
-        datasets: [{% for dataset in chart_data.datasets %}
-            {
-                borderColor: '{{ dataset.color or get_random_color() }}',
-                borderWidth: 1.5,
-                fill: false,
-                label: '{{ dataset.label }}',
-                spanGaps: true,
-                tension: 0.1,
-                hidden: {{ dataset.hidden or 'false' }},
-                data: [{% for item in dataset.data %}
-                    {{ item|safe }},
-                {% endfor %}],
-            },
-        {% endfor %}],
-    }
+        // get chart canvas
+        let ctx_{{ chart_id }} = document.getElementById("{{ chart_id }}").getContext("2d");
 
-    // get chart canvas
-    let ctx_{{ chart_id }} = document.getElementById("{{ chart_id }}").getContext("2d");
-
-    // create the chart using the chart canvas
-    let chart_{{ chart_id }} = new Chart(ctx_{{ chart_id }}, {
-        type: 'line',
-        data: chartData_{{ chart_id }},
-        options: {
-            interaction: {
-                //mode: 'nearest',
-                intersect: false,
-                //axis: 'xy',
-            },
-            {% if chart_data.min and chart_data.max %}
-                annotation: {
-                    annotations: [{
-                        backgroundColor: "rgba(46, 204, 113, 0.3)",
-                        borderWidth: 0,
-                        drawTime: "beforeDatasetsDraw",
-                        yMin: {{ chart_data.min or "null"}},
-                        yMax: {{ chart_data.max or "null"}},
-                        yScaleID: "y-axis-0",
-                        type: "box",
+        // create the chart using the chart canvas
+        let chart_{{ chart_id }} = new Chart(ctx_{{ chart_id }}, {
+            type: 'line',
+            data: chartData_{{ chart_id }},
+            options: {
+                interaction: {
+                    //mode: 'nearest',
+                    intersect: false,
+                    //axis: 'xy',
+                },
+                {% if chart_data.min and chart_data.max %}
+                    annotation: {
+                        annotations: [{
+                            backgroundColor: "rgba(46, 204, 113, 0.15)",
+                            borderWidth: 0,
+                            drawTime: "beforeDatasetsDraw",
+                            yMin: {{ chart_data.min or "null"}},
+                            yMax: {{ chart_data.max or "null"}},
+                            yScaleID: "y-axis-0",
+                            type: "box",
+                        }]
+                    },
+                {% endif %}
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
                     }]
                 },
-            {% endif %}
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                }],
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
+                elements: {
+                    point: {
+                        radius: 0
                     }
-                }]
-            },
-            elements: {
-                point: {
-                    radius: 0
                 }
             }
-        }
-    });
-    // ----- end chart_{{ chart_id }}  ------
-</script>
+        });
+        // ----- end chart_{{ chart_id }}  ------
+    </script>
 
 {% endmacro %}

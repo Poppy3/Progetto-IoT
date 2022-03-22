@@ -3,14 +3,13 @@
 # Mette a disposizione delle funzioni per leggere/scrivere da/verso il server
 ################################################################################
 
-# local
-from utils import compose_filename, error
-import config as cfg
-
-# standard libraries
-from pathlib import Path
 import json
+from pathlib import Path
+
 import requests
+
+import config as cfg
+from utils import compose_filename, error
 
 
 class ServerConnector:

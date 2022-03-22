@@ -1,9 +1,8 @@
-from ..forms.plant_type import PlantTypeForm
-from ..models.plant_type import PlantTypeModel, db
-from ..utils import human_readable_time
 from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy.exc import OperationalError
 
+from ..forms import PlantTypeForm
+from ..models import PlantTypeModel, db
 
 plant_type_bp = Blueprint('plant_type', __name__, url_prefix='/plant_type')
 
@@ -18,7 +17,7 @@ def list_all():
     page = request.args.get('page', default=1, type=int)
     size = request.args.get('size', default=15, type=int)
     try:
-        plant_types = PlantTypeModel.query.order_by(PlantTypeModel.name.asc())\
+        plant_types = PlantTypeModel.query.order_by(PlantTypeModel.name.asc()) \
             .paginate(page, size)
     except OperationalError:
         plant_types = None
