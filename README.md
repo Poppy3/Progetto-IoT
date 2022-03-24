@@ -51,7 +51,7 @@ through graphs.
 
 ---
 
-# Flowey
+## Flowey Installation
 
 This project consists of three main parts:
 
@@ -69,7 +69,7 @@ This project consists of three main parts:
 
 ---
 
-## Gateway installation
+### Gateway installation
 The code that pertains to the gateway is located into the `gateway` folder
 and expects to be run on an Arduino or similar device.
 
@@ -86,7 +86,7 @@ You can then use a USB Serial cable to connect the gateway to a bridge.
 
 ---
 
-## Bridge installation
+### Bridge installation
 The code that pertains to the bridge is located into the `bridge` folder
 and requires a Python 3 installation.
 
@@ -139,7 +139,7 @@ at startup to automatically start the main process.
 
 ---
 
-## Datacenter installation
+### Datacenter installation
 The code that pertains to the datacenter is located into the 
 `server` folder and requires a Python 3 installation.
 
@@ -158,7 +158,7 @@ pip install -r requirements.txt
 ```
 
 #### Start main server
-This starts the main server (in development mode only, for now...)
+This starts the main server (in development mode only, *for now...*)
 
 ```shell
 flask run
