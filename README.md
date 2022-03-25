@@ -76,7 +76,7 @@ and expects to be run on an Arduino or similar device.
 Load `manager.ino` into your device, and make sure to include the provided
 `libraries/DHT` library.
 (Follow the [documentation](https://docs.arduino.cc/software/ide-v1/tutorials/installing-libraries)
-to know how to do that.
+to know how to do that.)
 
 Connect the data sensors into your device following this schema:
 ![Gateway Diagram](gateway/gateway_diagram.png "Gateway Diagram")
