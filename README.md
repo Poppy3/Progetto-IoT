@@ -80,6 +80,7 @@ to know how to do that.)
 
 Connect the data sensors into your device following this schema:
 ![Gateway Diagram](gateway/gateway_diagram.png "Gateway Diagram")
+
 *Gateway Diagram*
 
 You can then use a USB Serial cable to connect the gateway to a bridge.
