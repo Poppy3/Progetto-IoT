@@ -16,7 +16,7 @@ if it's too cold or if it needs to be placed in another spot.
 Flowey will tell you if everything it's okay or if it needs 
 some adjustments.
 
-##About the Project
+## About the Project
 Flowey is part of the project for the exam 
 "Informatica Industriale e IOT" for the Computer Engineering 
 degree in UNIMORE.
@@ -26,7 +26,7 @@ system to help us in our "leafy" journey.
 The idea is to extend the IOT paradigm to an object which 
 can be found in many households, our plants.
 
-##How does it work
+## How does it work
 Flowey's systems is composed of various sensors that can 
 be mounted directly on your plant's vase,to monitor humidity, 
 temperature and luminosity, giving a well rounded idea of 
